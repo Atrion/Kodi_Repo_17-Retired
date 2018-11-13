@@ -1,31 +1,13 @@
-################################################################################
-#      Copyright (C) 2015 Surfacingx                                           #
-#                                                                              #
-#  This Program is free software; you can redistribute it and/or modify        #
-#  it under the terms of the GNU General Public License as published by        #
-#  the Free Software Foundation; either version 2, or (at your option)         #
-#  any later version.                                                          #
-#                                                                              #
-#  This Program is distributed in the hope that it will be useful,             #
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of              #
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                #
-#  GNU General Public License for more details.                                #
-#                                                                              #
-#  You should have received a copy of the GNU General Public License           #
-#  along with XBMC; see the file COPYING.  If not, write to                    #
-#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
-#  http://www.gnu.org/copyleft/gpl.html                                        #
-################################################################################
-
 import xbmc, xbmcaddon, xbmcgui, xbmcplugin, os, sys, xbmcvfs, glob
 import shutil
 import urllib2,urllib
 import re
 import uservar
 import time
+import datetime
 try:    from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
-from datetime import date, datetime, timedelta
+from datetime import date
 from resources.libs import wizard as wiz
 
 ADDON_ID       = uservar.ADDON_ID
@@ -38,295 +20,328 @@ USERDATA       = os.path.join(HOME,      'userdata')
 PLUGIN         = os.path.join(ADDONS,    ADDON_ID)
 PACKAGES       = os.path.join(ADDONS,    'packages')
 ADDONDATA      = os.path.join(USERDATA,  'addon_data', ADDON_ID)
-ADDOND         = os.path.join(USERDATA,  'addon_data')
 TRAKTFOLD      = os.path.join(ADDONDATA, 'trakt')
 ICON           = os.path.join(PLUGIN,    'icon.png')
-TODAY          = date.today()
-TOMORROW       = TODAY + timedelta(days=1)
-THREEDAYS      = TODAY + timedelta(days=3)
+TODAY          = datetime.date.today()
+TOMORROW       = TODAY + datetime.timedelta(days=1)
+THREEDAYS      = TODAY + datetime.timedelta(days=3)
+TRAKT_EXODUS   = wiz.getS('exodus')
+TRAKT_SALTS    = wiz.getS('salts')
+TRAKT_SALTSHD  = wiz.getS('saltshd')
+TRAKT_ROYALWE  = wiz.getS('royalwe')
+TRAKT_VELOCITY = wiz.getS('velocity')
+TRAKT_VELOKIDS = wiz.getS('velocitykids')
 KEEPTRAKT      = wiz.getS('keeptrakt')
-TRAKTSAVE      = wiz.getS('traktlastsave')
-COLOR1         = uservar.COLOR1
-COLOR2         = uservar.COLOR2
-ORDER          = ['exodus', 'metalliq', 'salts', 'saltshd', 'velocity', 'velocitykids', 'meta', 'royalwe', 'specto', 'trakt']
-
-TRAKTID = { 
-	'exodus': {
-		'name'     : 'Exodus',
-		'plugin'   : 'plugin.video.exodus',
-		'saved'    : 'exodus',
-		'path'     : os.path.join(ADDONS, 'plugin.video.exodus'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.exodus', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.exodus', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'exodus_trakt'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.exodus', 'settings.xml'),
-		'default'  : 'trakt.user',
-		'data'     : ['trakt.user', 'trakt.refresh', 'trakt.token'],
-		'activate' : 'RunPlugin(plugin://plugin.video.exodus/?action=authTrakt)'},
-	'metalliq': {
-		'name'     : 'MetalliQ',
-		'plugin'   : 'plugin.video.metalliq',
-		'saved'    : 'metalliq',
-		'path'     : os.path.join(ADDONS, 'plugin.video.metalliq'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.metalliq', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.metalliq', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'metalliq_trakt'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.metalliq', 'settings.xml'),
-		'default'  : 'trakt_access_token',
-		'data'     : ['trakt_access_token', 'trakt_refresh_token', 'trakt_expires_at'],
-		'activate' : 'RunPlugin(plugin://plugin.video.metalliq/authenticate_trakt)'},
-	'salts': {
-		'name'     : 'Streaming All The Sources',
-		'plugin'   : 'plugin.video.salts',
-		'saved'    : 'salts',
-		'path'     : os.path.join(ADDONS, 'plugin.video.salts'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.salts', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.salts', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'salts_trakt'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.salts', 'settings.xml'),
-		'default'  : 'trakt_user',
-		'data'     : ['trakt_oauth_token', 'trakt_refresh_token', 'trakt_user'],
-		'activate' : 'RunPlugin(plugin://plugin.video.salts/?mode=auth_trakt)'},
-	'saltshd': {
-		'name'     : 'Salts HD',
-		'plugin'   : 'plugin.video.saltshd.lite',
-		'saved'    : 'saltshd',
-		'path'     : os.path.join(ADDONS, 'plugin.video.saltshd.lite'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.saltshd.lite', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.saltshd.lite', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'saltshd_trakt'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.saltshd.lite', 'settings.xml'),
-		'default'  : 'trakt_user',
-		'data'     : ['trakt_oauth_token', 'trakt_refresh_token', 'trakt_user'],
-		'activate' : 'RunPlugin(plugin://plugin.video.saltshd.lite/?mode=auth_trakt)'},
-	'velocity': {
-		'name'     : 'Velocity',
-		'plugin'   : 'plugin.video.velocity',
-		'saved'    : 'velocity',
-		'path'     : os.path.join(ADDONS, 'plugin.video.velocity'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.velocity', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.velocity', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'velocity_trakt'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.velocity', 'settings.xml'),
-		'default'  : 'trakt_username',
-		'data'     : ['trakt_authorized', 'trakt_username', 'trakt_oauth_token', 'trakt_refresh_token'],
-		'activate' : 'RunPlugin(plugin://plugin.video.velocity/?mode=get_pin)'},
-	'velocitykids': {
-		'name'     : 'Velocity Kids',
-		'plugin'   : 'plugin.video.velocitykids',
-		'saved'    : 'velocitykids',
-		'path'     : os.path.join(ADDONS, 'plugin.video.velocitykids'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.velocitykids', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.velocitykids', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'velocitykids_trakt'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.velocitykids', 'settings.xml'),
-		'default'  : 'trakt_username',
-		'data'     : ['trakt_authorized', 'trakt_username', 'trakt_oauth_token', 'trakt_refresh_token'],
-		'activate' : 'RunPlugin(plugin://plugin.video.velocitykids/?mode=get_pin)'},
-	'meta': {
-		'name'     : 'Meta',
-		'plugin'   : 'plugin.video.meta',
-		'saved'    : 'meta',
-		'path'     : os.path.join(ADDONS, 'plugin.video.meta'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.meta', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.meta', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'meta_trakt'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.meta', 'settings.xml'),
-		'default'  : 'trakt_access_token',
-		'data'     : ['trakt_access_token', 'trakt_refresh_token', 'trakt_expires_at'],
-		'activate' : 'RunPlugin(plugin://plugin.video.meta/authenticate_trakt)'},
-	'royalwe': {
-		'name'     : 'The Royal We',
-		'plugin'   : 'plugin.video.theroyalwe',
-		'saved'    : 'royalwe',
-		'path'     : os.path.join(ADDONS, 'plugin.video.theroyalwe'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.theroyalwe', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.theroyalwe', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'royalwe_trakt'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.theroyalwe', 'settings.xml'),
-		'default'  : 'trakt_account',
-		'data'     : ['trakt_authorized', 'trakt_account', 'trakt_client_id', 'trakt_oauth_token', 'trakt_refresh_token', 'trakt_secret'],
-		'activate' : 'RunScript(plugin.video.theroyalwe, ?mode=authorize_trakt)'},
-	'specto': {
-		'name'     : 'Specto',
-		'plugin'   : 'plugin.video.specto',
-		'saved'    : 'specto',
-		'path'     : os.path.join(ADDONS, 'plugin.video.specto'),
-		'icon'     : os.path.join(ADDONS, 'plugin.video.specto', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'plugin.video.specto', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'specto_trakt'),
-		'settings' : os.path.join(ADDOND, 'plugin.video.specto', 'settings.xml'),
-		'default'  : 'trakt.user',
-		'data'     : ['trakt.user', 'trakt.token', 'trakt.refresh'],
-		'activate' : 'RunPlugin(plugin://plugin.video.specto/?action=authTrakt)'},
-	'trakt': {
-		'name'     : 'Trakt',
-		'plugin'   : 'script.trakt',
-		'saved'    : 'trakt',
-		'path'     : os.path.join(ADDONS, 'script.trakt'),
-		'icon'     : os.path.join(ADDONS, 'script.trakt', 'icon.png'),
-		'fanart'   : os.path.join(ADDONS, 'script.trakt', 'fanart.jpg'),
-		'file'     : os.path.join(TRAKTFOLD, 'trakt_trakt'),
-		'settings' : os.path.join(ADDOND, 'script.trakt', 'settings.xml'),
-		'default'  : 'user',
-		'data'     : ['user', 'Auth_Info', 'authorization'],
-		'activate' : 'RunScript(script.trakt, action=auth_info)'}
-}
+TRAKTSAVE      = wiz.getS('lastsave')
+EXODUS         = 'plugin.video.exodus'
+VELOCITY       = 'plugin.video.velocity'
+VELOCITYKIDS   = 'plugin.video.velocitykids'
+SALTS          = 'plugin.video.salts'
+SALTSHD        = 'plugin.video.saltshd.lite'
+ROYALWE        = 'plugin.video.theroyalwe'
+PATHSALTS      = os.path.join(ADDONS, SALTS)
+PATHSALTSHD    = os.path.join(ADDONS, SALTSHD)
+PATHEXODUS     = os.path.join(ADDONS, EXODUS)
+PATHVELOCITY   = os.path.join(ADDONS, VELOCITY)
+PATHVELOCITYKI = os.path.join(ADDONS, VELOCITYKIDS)
+PATHROYALWE    = os.path.join(ADDONS, ROYALWE)
 
 def traktUser(who):
 	user=None
-	if TRAKTID[who]:
-		if os.path.exists(TRAKTID[who]['path']):
-			try:
-				add = wiz.addonId(TRAKTID[who]['plugin'])
-				user = add.getSetting(TRAKTID[who]['default'])
-			except:
-				return None
+	if who == 'exodus'       and os.path.exists(PATHEXODUS):     ADD_EXODUS       = wiz.addonId(EXODUS);       user = ADD_EXODUS.getSetting('trakt.user')
+	if who == 'velocity'     and os.path.exists(PATHVELOCITY):   ADD_VELOCITY     = wiz.addonId(VELOCITY);     user = ADD_VELOCITY.getSetting('trakt_username')
+	if who == 'velocitykids' and os.path.exists(PATHVELOCITYKI): ADD_VELOCITYKIDS = wiz.addonId(VELOCITYKIDS); user = ADD_VELOCITYKIDS.getSetting('trakt_username')
+	if who == 'salts'        and os.path.exists(PATHSALTS):      ADD_SALTS        = wiz.addonId(SALTS);        user = ADD_SALTS.getSetting('trakt_user')
+	if who == 'saltshd'      and os.path.exists(PATHSALTSHD):    ADD_SALTSHD      = wiz.addonId(SALTSHD);      user = ADD_SALTSHD.getSetting('trakt_user')
+	if who == 'royalwe'      and os.path.exists(PATHROYALWE):    ADD_ROYALWE      = wiz.addonId(ROYALWE);      user = ADD_ROYALWE.getSetting('trakt_account')
 	return user
-
+		
 def traktIt(do, who):
 	if not os.path.exists(ADDONDATA): os.makedirs(ADDONDATA)
 	if not os.path.exists(TRAKTFOLD): os.makedirs(TRAKTFOLD)
-	if who == 'all':
-		for log in ORDER:
-			if os.path.exists(TRAKTID[log]['path']):
-				try:
-					addonid   = wiz.addonId(TRAKTID[log]['plugin'])
-					default   = TRAKTID[log]['default']
-					user      = addonid.getSetting(default)
-					if user == '' and do == 'update': continue
-					updateTrakt(do, log)
-				except: pass
-			else: wiz.log('[Trakt Data] %s(%s) is not installed' % (TRAKTID[log]['name'],TRAKTID[log]['plugin']), xbmc.LOGERROR)
-		wiz.setS('traktlastsave', str(THREEDAYS))
+	if who == "all":
+		if os.path.exists(PATHEXODUS):      trakt_Exodus(do)
+		if os.path.exists(PATHVELOCITY):    trakt_Velocity(do)
+		if os.path.exists(PATHVELOCITYKI):  trakt_VelocityKids(do)
+		if os.path.exists(PATHSALTS):       trakt_Salts(do)
+		if os.path.exists(PATHSALTSHD):     trakt_SaltsHD(do)
+		if os.path.exists(PATHROYALWE):     trakt_TheRoyalWe(do)
+		wiz.setS('lastsave', str(THREEDAYS))
 	else:
-		if TRAKTID[who]:
-			if os.path.exists(TRAKTID[who]['path']):
-				updateTrakt(do, who)
-		else: wiz.log('[Trakt Data] Invalid Entry: %s' % who, xbmc.LOGERROR)
+		if who == "exodus"       and os.path.exists(PATHEXODUS):      trakt_Exodus(do)
+		if who == "velocity"     and os.path.exists(PATHVELOCITY):    trakt_Velocity(do)
+		if who == "velocitykids" and os.path.exists(PATHVELOCITYKI):  trakt_VelocityKids(do)
+		if who == "salts"        and os.path.exists(PATHSALTS):       trakt_Salts(do)
+		if who == "saltshd"      and os.path.exists(PATHSALTSHD):     trakt_SaltsHD(do)
+		if who == "royalwe"      and os.path.exists(PATHROYALWE):     trakt_TheRoyalWe(do)
 
-def clearSaved(who, over=False):
+def clearSaved(who):
+	addonlist = {'salts':'salts_trakt', 'saltshd':'saltshd_trakt', 'exodus':'exodus_trakt', 'royalwe':'royalwe_trakt', 'velocity':'velocity_trakt', 'velocitykids':'velocitykids_trakt'}
 	if who == 'all':
-		for trakt in TRAKTID:
-			clearSaved(trakt,  True)
-	elif TRAKTID[who]:
-		file = TRAKTID[who]['file']
-		if os.path.exists(file):
-			os.remove(file)
-			wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, TRAKTID[who]['name']),'[COLOR %s]Trakt Data: Removed![/COLOR]' % COLOR2, 2000, TRAKTID[who]['icon'])
-		wiz.setS(TRAKTID[who]['saved'], '')
-	if over == False: wiz.refresh()
-
-def updateTrakt(do, who):
-	file      = TRAKTID[who]['file']
-	settings  = TRAKTID[who]['settings']
-	data      = TRAKTID[who]['data']
-	addonid   = wiz.addonId(TRAKTID[who]['plugin'])
-	saved     = TRAKTID[who]['saved']
-	default   = TRAKTID[who]['default']
-	user      = addonid.getSetting(default)
-	suser     = wiz.getS(saved)
-	name      = TRAKTID[who]['name']
-	icon      = TRAKTID[who]['icon']
-
+		for trakt in addonlist:
+			file = os.path.join(TRAKTFOLD, addonlist[trakt])
+			if os.path.exists(file): os.remove(file)
+			wiz.setS(trakt, '')
+			wiz.LogNotify(trakt.upper(),'Trakt Data: [COLOR green]Removed![/COLOR]', 2000, os.path.join(eval('PATH'+trakt.upper()),'icon.png'))
+	else:
+		file = os.path.join(TRAKTFOLD, addonlist[who])
+		if os.path.exists(file): os.remove(file)
+		wiz.setS(who, '')
+		wiz.LogNotify(who.upper(),'Trakt Data: [COLOR green]Removed![/COLOR]', 2000, os.path.join(eval('PATH'+who.upper()),'icon.png'))
+	xbmc.executebuiltin('Container.Refresh')	
+		
+def trakt_Salts(do):
+	SALTSFILE        = os.path.join(TRAKTFOLD, 'salts_trakt')
+	SALTSSETTINGS    = os.path.join(USERDATA, 'addon_data', SALTS,'settings.xml')
+	SALTS_TRAKT      = ['trakt_oauth_token', 'trakt_refresh_token', 'trakt_user']	
+	ADD_SALTS        = wiz.addonId(SALTS)
+	TRAKTSALTS       = ADD_SALTS.getSetting('trakt_user')
 	if do == 'update':
-		if not user == '':
-			try:
-				with open(file, 'w') as f:
-					for trakt in data: 
-						f.write('<trakt>\n\t<id>%s</id>\n\t<value>%s</value>\n</trakt>\n' % (trakt, addonid.getSetting(trakt)))
-					f.close()
-				user = addonid.getSetting(default)
-				wiz.setS(saved, user)
-				wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, name), '[COLOR %s]Trakt Data: Saved![/COLOR]' % COLOR2, 2000, icon)
-			except Exception, e:
-				wiz.log("[Trakt Data] Unable to Update %s (%s)" % (who, str(e)), xbmc.LOGERROR)
-		else: wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, name), '[COLOR %s]Trakt Data: Not Registered![/COLOR]' % COLOR2, 2000, icon)
+		if not TRAKTSALTS == '':
+			with open(SALTSFILE, 'w') as f:
+				for trakt in SALTS_TRAKT: f.write('<trakt>\n\t<id>%s</id>\n\t<value>%s</value>\n</trakt>\n' % (trakt, ADD_SALTS.getSetting(trakt)))
+			f.closed
+			wiz.setS('salts', ADD_SALTS.getSetting('trakt_user'))
+			wiz.LogNotify('SALTS','Trakt Data: [COLOR green]Saved![/COLOR]', 2000, os.path.join(PATHSALTS,'icon.png'))
+		else: wiz.LogNotify('SALTS','Trakt Data: [COLOR red]Not Registered![/COLOR]', 2000, os.path.join(PATHSALTS,'icon.png'))
 	elif do == 'restore':
-		if os.path.exists(file):
-			f = open(file,mode='r'); g = f.read().replace('\n','').replace('\r','').replace('\t',''); f.close();
+		if os.path.exists(SALTSFILE):
+			f = open(SALTSFILE,mode='r'); g = f.read().replace('\n','').replace('\r','').replace('\t',''); f.close();
 			match = re.compile('<trakt><id>(.+?)</id><value>(.+?)</value></trakt>').findall(g)
-			try:
-				if len(match) > 0:
-					for trakt, value in match:
-						addonid.setSetting(trakt, value)
-				user = addonid.getSetting(default)
-				wiz.setS(saved, user)
-				wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, name), '[COLOR %s]Trakt: Restored![/COLOR]' % COLOR2, 2000, icon)
-			except Exception, e:
-				wiz.log("[Trakt Data] Unable to Restore %s (%s)" % (who, str(e)), xbmc.LOGERROR)
-		#else: wiz.LogNotify(name,'Trakt Data: [COLOR red]Not Found![/COLOR]', 2000, icon)
+			if len(match) > 0:
+				for trakt, value in match:
+					ADD_SALTS.setSetting(trakt, value)
+				wiz.setS('salts', ADD_SALTS.getSetting('trakt_user'))
+			wiz.LogNotify('SALTS','Trakt Data: [COLOR green]Restored![/COLOR]', 2000, os.path.join(PATHSALTS,'icon.png'))
+		else: wiz.LogNotify('SALTS','Trakt Data: [COLOR red]Not Found![/COLOR]', 2000, os.path.join(PATHSALTS,'icon.png'))
 	elif do == 'clearaddon':
-		wiz.log('%s SETTINGS: %s' % (name, settings), xbmc.LOGDEBUG)
-		if os.path.exists(settings):
-			try:
-				f = open(settings, "r"); lines = f.readlines(); f.close()
-				f = open(settings, "w")
-				for line in lines:
-					match = wiz.parseDOM(line, 'setting', ret='id')
-					if len(match) == 0: f.write(line)
-					else:
-						if match[0] not in data: f.write(line)
-						else: wiz.log('Removing Line: %s' % line, xbmc.LOGNOTICE)
-				f.close()
-				wiz.LogNotify("[COLOR %s]%s[/COLOR]" % (COLOR1, name),'[COLOR %s]Addon Data: Cleared![/COLOR]' % COLOR2, 2000, icon)
-			except Exception, e:
-				wiz.log("[Trakt Data] Unable to Clear Addon %s (%s)" % (who, str(e)), xbmc.LOGERROR)
-	wiz.refresh()
-
-def autoUpdate(who):
-	if who == 'all':
-		for log in TRAKTID:
-			if os.path.exists(TRAKTID[log]['path']):
-				autoUpdate(log)
-	elif TRAKTID[who]:
-		if os.path.exists(TRAKTID[who]['path']):
-			u  = traktUser(who)
-			su = wiz.getS(TRAKTID[who]['saved'])
-			n = TRAKTID[who]['name']
-			if u == None or u == '': return
-			elif su == '': traktIt('update', who)
-			elif not u == su:
-				if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to save the [COLOR %s]Trakt[/COLOR] data for [COLOR %s]%s[/COLOR]?" % (COLOR2, COLOR1, COLOR1, n), "Addon: [COLOR green][B]%s[/B][/COLOR]" % u, "Saved:[/COLOR] [COLOR red][B]%s[/B][/COLOR]" % su if not su == '' else 'Saved:[/COLOR] [COLOR red][B]None[/B][/COLOR]', yeslabel="[B][COLOR green]Save Data[/COLOR][/B]", nolabel="[B][COLOR red]No Cancel[/COLOR][/B]"):
-					traktIt('update', who)
-			else: traktIt('update', who)
-
-def importlist(who):
-	if who == 'all':
-		for log in TRAKTID:
-			if os.path.exists(TRAKTID[log]['file']):
-				importlist(log)
-	elif TRAKTID[who]:
-		if os.path.exists(TRAKTID[who]['file']):
-			d  = TRAKTID[who]['default']
-			sa = TRAKTID[who]['saved']
-			su = wiz.getS(sa)
-			n  = TRAKTID[who]['name']
-			f  = open(TRAKTID[who]['file'],mode='r'); g = f.read().replace('\n','').replace('\r','').replace('\t',''); f.close();
-			m  = re.compile('<trakt><id>%s</id><value>(.+?)</value></trakt>' % d).findall(g)
-			if len(m) > 0:
-				if not m[0] == su:
-					if DIALOG.yesno(ADDONTITLE, "[COLOR %s]Would you like to import the [COLOR %s]Trakt[/COLOR] data for [COLOR %s]%s[/COLOR]?" % (COLOR2, COLOR1, COLOR1, n), "File: [COLOR green][B]%s[/B][/COLOR]" % m[0], "Saved:[/COLOR] [COLOR red][B]%s[/B][/COLOR]" % su if not su == '' else 'Saved:[/COLOR] [COLOR red][B]None[/B][/COLOR]', yeslabel="[B]Save Data[/B]", nolabel="[B]No Cancel[/B]"):
-						wiz.setS(sa, m[0])
-						wiz.log('[Import Data] %s: %s' % (who, str(m)), xbmc.LOGNOTICE)
-					else: wiz.log('[Import Data] Declined Import(%s): %s' % (who, str(m)), xbmc.LOGNOTICE)
-				else: wiz.log('[Import Data] Duplicate Entry(%s): %s' % (who, str(m)), xbmc.LOGNOTICE)
-			else: wiz.log('[Import Data] No Match(%s): %s' % (who, str(m)), xbmc.LOGNOTICE)
-
-def activateTrakt(who):
-	if TRAKTID[who]:
-		if os.path.exists(TRAKTID[who]['path']): 
-			act     = TRAKTID[who]['activate']
-			addonid = wiz.addonId(TRAKTID[who]['plugin'])
-			if act == '': addonid.openSettings()
-			else: url = xbmc.executebuiltin(TRAKTID[who]['activate'])
-		else: DIALOG.ok(ADDONTITLE, '%s is not currently installed.' % TRAKTID[who]['name'])
-	else: 
-		wiz.refresh()
-		return
-	check = 0
-	while traktUser(who) == None:
-		if check == 30: break
-		check += 1
-		time.sleep(10)
-	wiz.refresh()
+		wiz.log('SALTS SETTINGS: %s' % SALTSSETTINGS)
+		if os.path.exists(SALTSSETTINGS):
+			f = open(SALTSSETTINGS,"r"); lines = f.readlines(); f.close()
+			f = open(SALTSSETTINGS,"w")
+			for line in lines:
+				match = re.compile('<setting.+?id="(.+?)".+?/>').findall(line)
+				if len(match) == 0: f.write(line)
+				elif match[0] not in SALTS_TRAKT: f.write(line)
+				else: wiz.log('Removing Line: %s' % line)
+			f.close()
+			wiz.LogNotify('SALTS','Addon Data: [COLOR green]Cleared![/COLOR]', 2000, os.path.join(PATHSALTS,'icon.png'))
+		else: wiz.LogNotify('SALTS','Addon Data: [COLOR red]Clear Failed![/COLOR]', 2000, os.path.join(PATHSALTS,'icon.png'))
+	xbmc.executebuiltin('Container.Refresh')	
+	
+def trakt_SaltsHD(do):
+	SALTSHDFILE      = os.path.join(TRAKTFOLD, 'saltshd_trakt')
+	SALTSHDSETTINGS  = os.path.join(USERDATA, 'addon_data', SALTSHD,'settings.xml')
+	SALTSHD_TRAKT    = ['trakt_oauth_token', 'trakt_refresh_token', 'trakt_user']	
+	ADD_SALTSHD      = wiz.addonId(SALTSHD)
+	TRAKTSALTSHD     = ADD_SALTSHD.getSetting('trakt_user')
+	if do == 'update':
+		if not ADD_SALTSHD.getSetting('trakt_user') == '':
+			with open(SALTSHDFILE, 'w') as f:
+				for trakt in SALTSHD_TRAKT: f.write('<trakt>\n\t<id>%s</id>\n\t<value>%s</value>\n</trakt>\n' % (trakt, ADD_SALTSHD.getSetting(trakt)))
+			f.closed
+			wiz.setS('saltshd', ADD_SALTSHD.getSetting('trakt_user'))
+			wiz.LogNotify('SALTS HD','Trakt Data: [COLOR green]Saved![/COLOR]', 2000, os.path.join(PATHSALTSHD,'icon.png'))
+		else: wiz.LogNotify('SALTS HD','Trakt Data: [COLOR red]Not Registered![/COLOR]', 2000, os.path.join(PATHSALTSHD,'icon.png'))
+	elif do == 'restore':
+		if os.path.exists(SALTSHDFILE):
+			f = open(SALTSHDFILE,mode='r'); g = f.read().replace('\n','').replace('\r','').replace('\t',''); f.close();
+			match = re.compile('<trakt><id>(.+?)</id><value>(.+?)</value></trakt>').findall(g)
+			if len(match) > 0:
+				for trakt, value in match:
+					ADD_SALTSHD.setSetting(trakt, value)
+				wiz.setS('saltshd', ADD_SALTSHD.getSetting('trakt_user'))
+			wiz.LogNotify('SALTSHD','Trakt Data: [COLOR green]Restored![/COLOR]', 2000, os.path.join(PATHSALTSHD,'icon.png'))
+		else: wiz.LogNotify('SALTSHD','Trakt Data: [COLOR red]Not Found![/COLOR]', 2000, os.path.join(PATHSALTSHD,'icon.png'))
+	elif do == 'clearaddon':
+		wiz.log('SALTS HD SETTINGS: %s' % SALTSHDSETTINGS)
+		if os.path.exists(SALTSHDSETTINGS):
+			f = open(SALTSHDSETTINGS,"r"); lines = f.readlines(); f.close()
+			f = open(SALTSHDSETTINGS,"w")
+			for line in lines:
+				match = re.compile('<setting.+?id="(.+?)".+?/>').findall(line)
+				if len(match) == 0: f.write(line)
+				elif match[0] not in SALTSHD_TRAKT: f.write(line)
+				else: wiz.log('Removing Line: %s' % line)
+			f.close()
+			wiz.LogNotify('SALTS HD','Addon Data: [COLOR green]Cleared![/COLOR]', 2000, os.path.join(PATHSALTSHD,'icon.png'))
+		else: wiz.LogNotify('SALTS HD','Addon Data: [COLOR red]Clear Failed![/COLOR]', 2000, os.path.join(PATHSALTSHD,'icon.png'))
+	xbmc.executebuiltin('Container.Refresh')	
+	
+def trakt_Exodus(do):
+	EXODUSFILE      = os.path.join(TRAKTFOLD, 'exodus_trakt')
+	EXODUSSETTINGS  = os.path.join(USERDATA, 'addon_data', EXODUS,'settings.xml')
+	EXODUS_TRAKT    = ['trakt.user', 'trakt.refresh', 'trakt.token']
+	ADD_EXODUS      = wiz.addonId(EXODUS)
+	TRAKTEXODUS     = ADD_EXODUS.getSetting('trakt.user')
+	if do == 'update':
+		if not TRAKTEXODUS == '':
+			with open(EXODUSFILE, 'w') as f:
+				for trakt in EXODUS_TRAKT: f.write('<trakt>\n\t<id>%s</id>\n\t<value>%s</value>\n</trakt>\n' % (trakt, ADD_EXODUS.getSetting(trakt)))
+			f.closed
+			wiz.setS('exodus', ADD_EXODUS.getSetting('trakt.user'))
+			wiz.LogNotify('Exodus','Trakt: [COLOR green]Saved![/COLOR]', 2000, os.path.join(PATHEXODUS,'icon.png'))
+		else: wiz.LogNotify('Exodus','Trakt Data: [COLOR red]Not Registered![/COLOR]', 2000, os.path.join(PATHEXODUS,'icon.png'))
+	elif do == 'restore':
+		if os.path.exists(EXODUSFILE):
+			f = open(EXODUSFILE,mode='r'); g = f.read().replace('\n','').replace('\r','').replace('\t',''); f.close();
+			match = re.compile('<trakt><id>(.+?)</id><value>(.+?)</value></trakt>').findall(g)
+			if len(match) > 0:
+				for trakt, value in match:
+					ADD_EXODUS.setSetting(trakt, value)
+			wiz.setS('exodus', ADD_EXODUS.getSetting('trakt.user'))
+			wiz.LogNotify('Exodus','Trakt: [COLOR green]Restored![/COLOR]', 2000, os.path.join(PATHEXODUS,'icon.png'))
+		else: wiz.LogNotify('Exodus','Trakt Data: [COLOR red]Not Found![/COLOR]', 2000, os.path.join(PATHEXODUS,'icon.png'))
+	elif do == 'clearaddon':
+		wiz.log('Exodus SETTINGS: %s' % EXODUSSETTINGS)
+		if os.path.exists(EXODUSSETTINGS):
+			f = open(EXODUSSETTINGS,"r"); lines = f.readlines(); f.close()
+			f = open(EXODUSSETTINGS,"w")
+			for line in lines:
+				match = re.compile('<setting.+?id="(.+?)".+?/>').findall(line)
+				if len(match) == 0: f.write(line)
+				elif match[0] not in EXODUS_TRAKT: f.write(line)
+				else: wiz.log('Removing Line: %s' % line)
+			f.close()
+			wiz.LogNotify('Exodus','Addon Data: [COLOR green]Cleared![/COLOR]', 2000, os.path.join(PATHEXODUS,'icon.png'))
+		else: wiz.LogNotify('Exodus','Addon Data: [COLOR red]Clear Failed![/COLOR]', 2000, os.path.join(PATHEXODUS,'icon.png'))
+	xbmc.executebuiltin('Container.Refresh')
+	
+def trakt_Velocity(do):
+	VELOCITYFILE     = os.path.join(TRAKTFOLD, 'velocity_trakt')
+	VELOCITYSETTINGS = os.path.join(USERDATA, 'addon_data', VELOCITY,'settings.xml')
+	VELO_TRAKT       = ['trakt_authorized', 'trakt_username', 'trakt_oauth_token', 'trakt_refresh_token']
+	ADD_VELOCITY     = wiz.addonId(VELOCITY)
+	TRAKTVELOCITY    = ADD_VELOCITY.getSetting('trakt_username')
+	if do == 'update':
+		if ADD_VELOCITY.getSetting('trakt_authorized') == 'true':
+			with open(VELOCITYFILE, 'w') as f:
+				for trakt in VELO_TRAKT: f.write('<trakt>\n\t<id>%s</id>\n\t<value>%s</value>\n</trakt>\n' % (trakt, ADD_VELOCITY.getSetting(trakt)))
+			f.closed
+			wiz.setS('velocity', ADD_VELOCITY.getSetting('trakt_username'))
+			wiz.LogNotify('Velocity','Trakt Data: [COLOR green]Saved![/COLOR]', 2000, os.path.join(PATHVELOCITY,'icon.png'))
+		else: wiz.LogNotify('Velocity','Trakt Data: [COLOR red]Not Registered![/COLOR]', 2000, os.path.join(PATHVELOCITY,'icon.png'))
+	elif do == 'restore':
+		if os.path.exists(VELOCITYFILE):
+			f = open(VELOCITYFILE,mode='r'); g = f.read().replace('\n','').replace('\r','').replace('\t',''); f.close();
+			match = re.compile('<trakt><id>(.+?)</id><value>(.+?)</value></trakt>').findall(g)
+			if len(match) > 0:
+				for trakt, value in match:
+					ADD_VELOCITY.setSetting(trakt, value)
+				wiz.setS('velocity', ADD_VELOCITY.getSetting('trakt_username'))
+			wiz.LogNotify('Velocity','Trakt Data: [COLOR green]Restored![/COLOR]', 2000, os.path.join(PATHVELOCITY,'icon.png'))
+		else: wiz.LogNotify('Velocity','Trakt Data: [COLOR red]Not Found![/COLOR]', 2000, os.path.join(PATHVELOCITY,'icon.png'))
+	elif do == 'clearaddon':
+		wiz.log('Velocity SETTINGS: %s' % VELOCITYSETTINGS)
+		if os.path.exists(VELOCITYSETTINGS):
+			f = open(VELOCITYSETTINGS,"r"); lines = f.readlines(); f.close()
+			f = open(VELOCITYSETTINGS,"w")
+			for line in lines:
+				match = re.compile('<setting.+?id="(.+?)".+?/>').findall(line)
+				if len(match) == 0: f.write(line)
+				elif match[0] not in VELO_TRAKT: f.write(line)
+				else: wiz.log('Removing Line: %s' % line)
+			f.close()
+			wiz.LogNotify('Velocity','Addon Data: [COLOR green]Cleared![/COLOR]', 2000, os.path.join(PATHVELOCITY,'icon.png'))
+		else: wiz.LogNotify('Velocity','Addon Data: [COLOR red]Clear Failed![/COLOR]', 2000, os.path.join(PATHVELOCITY,'icon.png'))
+	xbmc.executebuiltin('Container.Refresh')
+	
+def trakt_VelocityKids(do):
+	VELOCITYKIDSFILE  = os.path.join(TRAKTFOLD, 'velocitykids_trakt')
+	VELOCITYKSETTINGS = os.path.join(USERDATA, 'addon_data', VELOCITYKIDS,'settings.xml')
+	VELOKIDS_TRAKT    = ['trakt_authorized', 'trakt_username', 'trakt_oauth_token', 'trakt_refresh_token']
+	ADD_VELOCITYKIDS  = wiz.addonId(VELOCITYKIDS)
+	TRAKTVELOCITYKIDS = ADD_VELOCITYKIDS.getSetting('trakt_username')
+	if do == 'update':
+		if ADD_VELOCITYKIDS.getSetting('trakt_authorized') == 'true':
+			with open(VELOCITYKIDSFILE, 'w') as f:
+				for trakt in VELOKIDS_TRAKT: f.write('<trakt>\n\t<id>%s</id>\n\t<value>%s</value>\n</trakt>\n' % (trakt, ADD_VELOCITYKIDS.getSetting(trakt)))
+			f.closed
+			wiz.setS('velocitykids', ADD_VELOCITYKIDS.getSetting('trakt_username'))
+			wiz.LogNotify('Velocity Kids','Trakt Data: [COLOR green]Saved![/COLOR]', 2000, os.path.join(PATHVELOCITYKI,'icon.png'))
+		else: wiz.LogNotify('Velocity Kids','Trakt Data: [COLOR red]Not Registered![/COLOR]', 2000, os.path.join(PATHVELOCITYKI,'icon.png'))
+	elif do == 'restore':
+		if os.path.exists(VELOCITYKIDSFILE):
+			f = open(VELOCITYKIDSFILE,mode='r'); g = f.read().replace('\n','').replace('\r','').replace('\t',''); f.close();
+			match = re.compile('<trakt><id>(.+?)</id><value>(.+?)</value></trakt>').findall(g)
+			if len(match) > 0:
+				for trakt, value in match:
+					ADD_VELOCITYKIDS.setSetting(trakt, value)
+				wiz.setS('velocitykids', ADD_VELOCITYKIDS.getSetting('trakt_username'))
+			wiz.LogNotify('Velocity Kids','Trakt Data: [COLOR green]Restored![/COLOR]', 2000, os.path.join(PATHVELOCITYKI,'icon.png'))
+		else: wiz.LogNotify('Velocity Kids','Trakt Data: [COLOR red]Not Found![/COLOR]', 2000, os.path.join(PATHVELOCITYKI,'icon.png'))
+	elif do == 'clearaddon':
+		wiz.log('Velocity Kids SETTINGS: %s' % VELOCITYKSETTINGS)
+		if os.path.exists(VELOCITYKSETTINGS):
+			f = open(VELOCITYKSETTINGS,"r"); lines = f.readlines(); f.close()
+			f = open(VELOCITYKSETTINGS,"w")
+			for line in lines:
+				match = re.compile('<setting.+?id="(.+?)".+?/>').findall(line)
+				if len(match) == 0: f.write(line)
+				elif match[0] not in VELOKIDS_TRAKT: f.write(line)
+				else: wiz.log('Removing Line: %s' % line)
+			f.close()
+			wiz.LogNotify('Velocity Kids','Addon Data: [COLOR green]Cleared![/COLOR]', 2000, os.path.join(PATHVELOCITYKI,'icon.png'))
+		else: wiz.LogNotify('Velocity Kids','Addon Data: [COLOR red]Clear Failed![/COLOR]', 2000, os.path.join(PATHVELOCITYKI,'icon.png'))
+	xbmc.executebuiltin('Container.Refresh')
+	
+def trakt_TheRoyalWe(do):
+	ROYALWEFILE     = os.path.join(TRAKTFOLD, 'royalwe_trakt')
+	ROYALWESETTINGS = os.path.join(USERDATA, 'addon_data', ROYALWE,'settings.xml')
+	ROYAL_TRAKT     = ['trakt_authorized', 'trakt_account', 'trakt_client_id', 'trakt_oauth_token', 'trakt_refresh_token', 'trakt_secret']
+	ADD_ROYALWE     = wiz.addonId(ROYALWE)
+	TRAKTROYAL      = ADD_ROYALWE.getSetting('trakt_account')
+	if do == 'update':
+		if ADD_ROYALWE.getSetting('trakt_authorized') == 'true':
+			with open(ROYALWEFILE, 'w') as f:
+				for trakt in ROYAL_TRAKT: f.write('<trakt>\n\t<id>%s</id>\n\t<value>%s</value>\n</trakt>\n' % (trakt, ADD_ROYALWE.getSetting(trakt)))
+			f.closed
+			wiz.setS('royalwe', ADD_ROYALWE.getSetting('trakt_account'))
+			wiz.LogNotify('The Royal We','Trakt Data: [COLOR green]Saved![/COLOR]', 2000, os.path.join(PATHROYALWE,'icon.png'))
+		else: wiz.LogNotify('The Royal We','Trakt Data: [COLOR red]Not Registered![/COLOR]', 2000, os.path.join(PATHROYALWE,'icon.png'))
+	elif do == 'restore':
+		if os.path.exists(ROYALWEFILE):
+			f = open(ROYALWEFILE,mode='r'); g = f.read().replace('\n','').replace('\r','').replace('\t',''); f.close();
+			match = re.compile('<trakt><id>(.+?)</id><value>(.+?)</value></trakt>').findall(g)
+			if len(match) > 0:
+				for trakt, value in match:
+					ADD_ROYALWE.setSetting(trakt, value)
+				wiz.setS('royalwe', ADD_ROYALWE.getSetting('trakt_account'))
+			wiz.LogNotify('The Royal We','Trakt Data: [COLOR green]Restored![/COLOR]', 2000, os.path.join(PATHROYALWE,'icon.png'))
+		else: wiz.LogNotify('The Royal We','Trakt Data: [COLOR red]Not Found![/COLOR]', 2000, os.path.join(PATHROYALWE,'icon.png'))
+	elif do == 'clearaddon':
+		wiz.log('The Royal We SETTINGS: %s' % ROYALWESETTINGS)
+		if os.path.exists(ROYALWESETTINGS):
+			f = open(ROYALWESETTINGS,"r"); lines = f.readlines(); f.close()
+			f = open(ROYALWESETTINGS,"w")
+			for line in lines:
+				match = re.compile('<setting.+?id="(.+?)".+?/>').findall(line)
+				if len(match) == 0: f.write(line)
+				elif match[0] not in ROYAL_TRAKT: f.write(line)
+				else: wiz.log('Removing Line: %s' % line)
+			f.close()
+			wiz.LogNotify('The Royal We','Addon Data: [COLOR green]Cleared![/COLOR]', 2000, os.path.join(PATHROYALWE,'icon.png'))
+		else: wiz.LogNotify('The Royal We','Addon Data: [COLOR red]Clear Failed![/COLOR]', 2000, os.path.join(PATHROYALWE,'icon.png'))
+	xbmc.executebuiltin('Container.Refresh')
+	
+def activateTrakt(name):
+	url = None
+	if name == 'exodus':
+		if os.path.exists(PATHEXODUS): url = 'RunPlugin(plugin://plugin.video.exodus/?action=authTrakt)'
+		else: DIALOG.ok(ADDONTITLE, 'Exodus is not currently installed.')
+	elif name == 'velocity': 
+		if os.path.exists(PATHVELOCITY): url = 'RunPlugin(plugin://plugin.video.velocity/?mode=get_pin)'
+		else: DIALOG.ok(ADDONTITLE, 'Velocity is not currently installed.')
+	elif name == 'velocitykids': 
+		if os.path.exists(PATHVELOCITYKI): url = 'RunPlugin(plugin://plugin.video.velocitykids/?mode=get_pin)'
+		else: DIALOG.ok(ADDONTITLE, 'Velocity Kids is not currently installed.')
+	elif name == 'salts':
+		if os.path.exists(PATHSALTS): url = 'RunPlugin(plugin://plugin.video.salts/?mode=auth_trakt)'
+		else: DIALOG.ok(ADDONTITLE, 'SALTS is not currently installed.')
+	elif name == 'saltshd': 
+		if os.path.exists(PATHSALTSHD): url = 'RunPlugin(plugin://plugin.video.saltshd.lite/?mode=auth_trakt)'
+		else: DIALOG.ok(ADDONTITLE, 'SALTS Lite HD is not currently installed.')
+	elif name == 'royalwe': 
+		if os.path.exists(PATHROYALWE): url = 'RunScript(plugin.video.theroyalwe, ?mode=authorize_trakt)'
+		else: DIALOG.ok(ADDONTITLE, 'The Royal We is not currently installed.')
+	if not url == None: xbmc.executebuiltin(url)

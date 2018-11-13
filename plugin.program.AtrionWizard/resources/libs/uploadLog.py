@@ -1,268 +1,283 @@
-################################################################################
-#      Copyright (C) 2015 Surfacingx and Whufclee                              #
-#                                                                              #
-#  This Program is free software; you can redistribute it and/or modify        #
-#  it under the terms of the GNU General Public License as published by        #
-#  the Free Software Foundation; either version 2, or (at your option)         #
-#  any later version.                                                          #
-#                                                                              #
-#  This Program is distributed in the hope that it will be useful,             #
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of              #
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                #
-#  GNU General Public License for more details.                                #
-#                                                                              #
-#  You should have received a copy of the GNU General Public License           #
-#  along with XBMC; see the file COPYING.  If not, write to                    #
-#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.       #
-#  http://www.gnu.org/copyleft/gpl.html                                        #
-################################################################################
-# Kodi Logfile Uploader                                                        #
-#   Original Code by Team Kodi                                                 #
-#     By Surfacingx and Whufclee                                               #
-#                                                                              #
-#   Modified to Support Kodi Forks                                             #
-#   Added Email Logfile Url Support                                            #
-################################################################################
+#  Much of this code was taken from existing Log Uploaders but so far
+#  I have been unable to find details of the original author(s) to credit them.
+#  Changes in the code have been made by myself, notably the checks to see if the system
+#  is XBMC or Kodi.
+#
+#      Copyright (C) 2015 whufclee
+#
+#  This Program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2, or (at your option)
+#  any later version.
+#
+#  This Program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with XBMC; see the file COPYING.  If not, write to
+#  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+#  http://www.gnu.org/copyleft/gpl.html
+#
 
-import os
-import re
-import socket
-import pyqrcode
-from urllib import urlencode
-from urllib import FancyURLopener
-import urllib2
-import urlparse
-import urllib
-import json
-import xbmc
-import xbmcgui
 import xbmcaddon
-import xbmcvfs
+import xbmcgui
+import json
+import os
 import uservar
+import re
+import urllib
+import urllib2
+import xbmc
 from resources.libs import wizard as wiz
 
-ADDON_ID         = uservar.ADDON_ID
-ADDONTITLE       = uservar.ADDONTITLE
-COLOR1           = uservar.COLOR1
-COLOR2           = uservar.COLOR2
-ADDON            = wiz.addonId(ADDON_ID)
-ADDONVERSION     = ADDON.getAddonInfo('version')
-DIALOG           = xbmcgui.Dialog()
-URL              = 'https://paste.ubuntu.com/'
-EXPIRATION       = 2592000
-REPLACES         = (('//.+?:.+?@', '//USER:PASSWORD@'),('<user>.+?</user>', '<user>USER</user>'),('<pass>.+?</pass>', '<pass>PASSWORD</pass>'),)
-HOME             = xbmc.translatePath('special://home/')
-LOG              = xbmc.translatePath('special://logpath/')
-USERDATA         = os.path.join(HOME,      'userdata')
-ADDONDATA        = os.path.join(USERDATA,  'addon_data', ADDON_ID)
-WIZLOG           = os.path.join(ADDONDATA, 'wizard.log')
+from xbmc import getCondVisibility as condition, translatePath as translate, log as xbmc_log
 
-socket.setdefaulttimeout(5)
+DIALOG        = xbmcgui.Dialog()
+AddonID       = uservar.ADDON_ID
+addon         = wiz.addonId(AddonID)
+ADDON_TITLE   = wiz.addonInfo(AddonID,'name')
+ADDON_VERSION = wiz.addonInfo(AddonID,'version')
+DEBUG         = False
 
-class QRCode(xbmcgui.WindowXMLDialog):
-	def __init__(self, *args, **kwargs):
-		self.image = kwargs["image"]
-		self.text = kwargs["text"]
+STRINGS = {
+    'do_upload': 30000,
+    'upload_id': 30001,
+    'upload_url': 30002,
+    'no_email_set': 30003,
+    'email_sent': 30004
+}
+BASE_URL = 'http://xbmclogs.com'
+UPLOAD_LINK = BASE_URL + '/%s'
+UPLOAD_URL = BASE_URL + '/api/json/create'
+EMAIL_URL = BASE_URL + '/xbmc-addon.php'
 
-	def onInit(self):
-		self.imagecontrol = 501
-		self.textbox = 502
-		self.okbutton = 503
-		self.title = 504
-		self.showdialog()
+REPLACES = (
+    ('//.+?:.+?@', '//USER:PASSWORD@'),
+    ('<user>.+?</user>', '<user>USER</user>'),
+    ('<pass>.+?</pass>', '<pass>PASSWORD</pass>'),
+)
 
-	def showdialog(self):
-		self.getControl(self.imagecontrol).setImage(self.image)
-		self.getControl(self.textbox).setText(self.text)
-		self.getControl(self.title).setLabel(ADDONTITLE)
-		self.setFocus(self.getControl(self.okbutton))
 
-	def onClick(self, controlId):
-		if (controlId == self.okbutton):
-			self.close()
+# # Open Settings on first run
+# if not addon.getSetting('already_shown') == 'true':
+#     addon.openSettings()
+#     addon.setSetting('already_shown', 'true')
 
-# Custom urlopener to set user-agent
-class pasteURLopener(FancyURLopener):
-	version = '%s: %s' % (ADDON_ID, ADDONVERSION)
 
-class Main:
-	def __init__(self):
-		self.getSettings()
-		files = self.getFiles()
-		for item in files:
-			filetype = item[0]
-			if filetype == 'log':
-				log = wiz.Grab_Log(file=True).replace(LOG, "")
-				name = log if log != False else "kodi.log"
-				error = "Error posting the %s file" % name
-			elif filetype == 'oldlog':
-				log = wiz.Grab_Log(file=True, old=True).replace(LOG, "")
-				name = log if log != False else "kodi.old.log"
-				error = "Error posting the %s file" % name
-			elif filetype == 'wizlog':
-				name = "wizard.log"
-				error = "Error posting the %s file" % name
-			elif filetype == 'crashlog':
-				name = "crash log"
-				error = "Error posting the crashlog file"
-			succes, data = self.readLog(item[1])
-			if succes:
-				content = self.cleanLog(data)
-				succes, result = self.postLog(content, name)
-				if succes:
-					msg = "Post this url or scan QRcode for your [COLOR %s]%s[/COLOR], together with a description of the problem:[CR][COLOR %s]%s[/COLOR]" % (COLOR1, name, COLOR1, result)
-					if len(self.email) > 5: 
-						em_result, em_msg = self.email_Log(self.email, result, name)
-						if em_result == 'message':
-							msg += "[CR]%s" % em_msg
-						else:
-							msg += "[CR]Email ERROR: %s" % em_msg
-					self.showResult(msg, result)
-				else:
-					self.showResult('%s[CR]%s' % (error, result))
-			else:
-				self.showResult('%s[CR]%s' % (error, result))
+class LogUploader(object):
 
-	def getSettings(self):
-		self.oldlog   = ADDON.getSetting('oldlog') == 'true'
-		self.wizlog   = ADDON.getSetting('wizlog') == 'true'
-		self.crashlog = ADDON.getSetting('crashlog') == 'true'
-		self.email    = ADDON.getSetting('email')
+    def __init__(self):
+        self.__log('started')
+        self.get_settings()
+        found_logs = self.__get_logs()
+        uploaded_logs = []
+        
+        for logfile in found_logs:
+            
+            if self.ask_upload(logfile['title']):
+                paste_id = self.upload_file(logfile['path'])
+                
+                if paste_id:
+                    uploaded_logs.append({
+                        'paste_id': paste_id,
+                        'title': logfile['title']
+                    })
+                    self.report_msg(paste_id)
+        
+        if uploaded_logs and self.email_address:
+            self.report_mail(self.email_address, uploaded_logs)
+            pass
 
-	def getFiles(self):
-		logfiles = []
-		log    = wiz.Grab_Log(file=True)
-		old    = wiz.Grab_Log(file=True, old=True)
-		wizard = False if not os.path.exists(WIZLOG) else WIZLOG
-		if log != False:
-			if os.path.exists(log): logfiles.append(['log', log])
-			else: self.showResult("No log file found")
-		else: self.showResult("No log file found")
-		if self.oldlog:
-			if old != False:
-				if os.path.exists(old): logfiles.append(['oldlog', old])
-				else: self.showResult("No old log file found")
-			else: self.showResult("No old log file found")
-		if self.wizlog:
-			if wizard != False:
-				logfiles.append(['wizlog', wizard])
-			else: self.showResult("No wizard log file found")
-		if self.crashlog:
-			crashlog_path = ''
-			items = []
-			if xbmc.getCondVisibility('system.platform.osx'):
-				crashlog_path = os.path.join(os.path.expanduser('~'), 'Library/Logs/DiagnosticReports/')
-				filematch = 'Kodi'
-			elif xbmc.getCondVisibility('system.platform.ios'):
-				crashlog_path = '/var/mobile/Library/Logs/CrashReporter/'
-				filematch = 'Kodi'
-			elif wiz.platform() == 'linux':
-				crashlog_path = os.path.expanduser('~') # not 100% accurate (crashlogs can be created in the dir kodi was started from as well)
-				filematch = 'kodi_crashlog'
-			elif wiz.platform() == 'windows':
-				wiz.log("Windows crashlogs are not supported, please disable this option in the addon settings", xbmc.LOGNOTICE)
-				#self.showResult("Windows crashlogs are not supported, please disable this option in the addon settings")
-			elif wiz.platform() == 'android':
-				wiz.log("Android crashlogs are not supported, please disable this option in the addon settings", xbmc.LOGNOTICE)
-				#self.showResult("Android crashlogs are not supported, please disable this option in the addon settings")
-			if crashlog_path and os.path.isdir(crashlog_path):
-				dirs, files = xbmcvfs.listdir(crashlog_path)
-				for item in files:
-					if filematch in item and os.path.isfile(os.path.join(crashlog_path, item)):
-						items.append(os.path.join(crashlog_path, item))
-						items.sort(key=lambda f: os.path.getmtime(f))
-						lastcrash = items[-1]
-						logfiles.append(['crashlog', lastcrash])
-			if len(items) == 0:
-				wiz.log("No crashlog file found", xbmc.LOGNOTICE)
-		return logfiles
+    def get_settings(self):
+        self.email_address = wiz.getS('email')
+        self.__log('settings: len(email)=%d' % len(self.email_address))
+        self.skip_oldlog = wiz.getS('skip_oldlog') == 'true'
+        self.__log('settings: skip_oldlog=%s' % self.skip_oldlog)
 
-	def readLog(self, path):
-		try:
-			lf = xbmcvfs.File(path)
-			content = lf.read()
-			lf.close()
-			if content:
-				return True, content
-			else:
-				wiz.log('file is empty', xbmc.LOGNOTICE)
-				return False, "File is Empty"
-		except:
-			wiz.log('unable to read file', xbmc.LOGNOTICE)
-			return False, "Unable to Read File"
+    def upload_file(self, filepath):
+        self.__log('reading log...')
+        file_content = open(filepath, 'r').read()
+        
+        for pattern, repl in REPLACES:
+            file_content = re.sub(pattern, repl, file_content)
+        
+        self.__log('starting upload "%s"...' % filepath)
+        post_dict = {
+            'data': file_content,
+            'project': 'www',
+            'language': 'text',
+            'expire': 1209600,
+        }
+        post_data = json.dumps(post_dict)
+        headers = {
+            'User-Agent': '%s-%s' % (ADDON_TITLE, ADDON_VERSION),
+            'Content-Type': 'application/json',
+        }
+        req      = urllib2.Request(UPLOAD_URL, post_data, headers)
+        response = urllib2.urlopen(req).read()
+        self.__log('upload done.')
+        
+        try:
+            response_data = json.loads(response)
+        
+        except:
+            response_data = None
+        
+        if response_data and response_data.get('result', {}).get('id'):
+            paste_id = response_data['result']['id']
+            self.__log('paste_id=%s' % paste_id)
+            return paste_id
+        
+        else:
+            self.__log('upload failed with response: %s' % repr(response))
 
-	def cleanLog(self, content):
-		for pattern, repl in REPLACES:
-			content = re.sub(pattern, repl, content)
-			return content
+    def ask_upload(self, logfile):
+        
+        msg1 = 'Do you want to upload "%s"?' % logfile
+        
+        if self.email_address:
+            msg2 = 'Email will be sent to: %s' % self.email_address
+        
+        else:
+            msg2 = 'No email will be sent (No email is configured)'
+        
+        return DIALOG.yesno(ADDON_TITLE, msg1, '', msg2)
 
-	def postLog(self, data, name):
-		params = {}
-		params['poster'] = 'kodi'
-		params['content'] = data
-		params['syntax'] = 'text'
-		params = urlencode(params)
+    def report_msg(self, paste_id):
+        url = UPLOAD_LINK % paste_id
+        msg1 = 'Uploaded with ID: [B]%s[/B]' % paste_id
+        msg2 = 'URL: [B]%s[/B]' % url
+        return DIALOG.ok(ADDON_TITLE, msg1, '', msg2)
 
-		url_opener = pasteURLopener()
+    def report_mail(self, mail_address, uploaded_logs):
+        if not mail_address:
+            raise Exception('No Email set!')
+        
+        post_dict = {'email': mail_address}
+        
+        for logfile in uploaded_logs:
+            
+            if logfile['title'] == 'kodi.log':
+                post_dict['xbmclog_id'] = logfile['paste_id']
+            
+            elif logfile['title'] == 'kodi.old.log':
+                post_dict['oldlog_id'] = logfile['paste_id']
+            
+            elif logfile['title'] == 'crash.log':
+                post_dict['crashlog_id'] = logfile['paste_id']
+        
+        post_data = urllib.urlencode(post_dict)
+        
+        if DEBUG:
+            print post_data
+        
+        req      = urllib2.Request(EMAIL_URL, post_data)
+        response = urllib2.urlopen(req).read()
+        
+        if DEBUG:
+            print response
 
-		try:
-			page = url_opener.open(URL, params)
-		except Exception, e:
-			a = 'failed to connect to the server'
-			wiz.log("%s: %s" % (a, str(e)), xbmc.LOGERROR)
-			return False, a
+    def __get_logs(self):
+        xbmc_version    = xbmc.getInfoLabel("System.BuildVersion")
+        version         = float(xbmc_version[:4])
+        log_path        = translate('special://logpath')
+        crashlog_path   = None
+        crashfile_match = None
+        
+        if condition('system.platform.osx') or condition('system.platform.ios'):
+            crashlog_path = os.path.join(
+                os.path.expanduser('~'),
+                'Library/Logs/CrashReporter'
+            )
+            
+            if version < 14:
+                crashfile_match = 'XBMC'
+            
+            else:
+                crashfile_match = 'kodi'
+        
+        elif condition('system.platform.windows'):
+            crashlog_path = log_path
+            crashfile_match = '.dmp'
+        
+        elif condition('system.platform.linux'):
+            crashlog_path = os.path.expanduser('~')
+            
+            if version < 14:
+                crashfile_match = 'xbmc_crashlog'
+            
+            else:
+                crashfile_match = 'kodi_crashlog'
 
-		try:
-			page_url = page.url.strip()
-			wiz.log("URL for %s: %s" % (name, page_url), xbmc.LOGNOTICE)
-			return True, page_url
-		except Exception, e:
-			a = 'unable to retrieve the paste url'
-			wiz.log("%s: %s" % (a, str(e)), xbmc.LOGERROR)
-			return False, a
-			
-	def email_Log(self, email, results, file):
-		URL = 'http://aftermathwizard.net/mail_logs.php'
-		data = {'email': email, 'results': results, 'file': file, 'wizard': ADDONTITLE}
-		params = urlencode(data)
-		url_opener = pasteURLopener()
-		try:
-			result     = url_opener.open(URL, params)
-			returninfo = result.read()
-			wiz.log(str(returninfo), xbmc.LOGNOTICE)
-		except Exception, e:
-			a = 'failed to connect to the server'
-			wiz.log("%s: %s" % (a, str(e)), xbmc.LOGERROR)
-			return False, a
-		try:
-			js_data = json.loads(returninfo)
-			if 'type' in js_data:
-				return js_data['type'], str(js_data['text'])
-			else: return str(js_data)
-		except Exception, e:
-			wiz.log("ERROR: "+ str(e), xbmc.LOGERROR)
-		return "Error Sending Email."
+# get fullpath for xbmc.log and xbmc.old.log
+        if version < 14:
+            log = os.path.join(log_path, 'xbmc.log')
+            log_old = os.path.join(log_path, 'xbmc.old.log')
+        
+        else:
+            log = os.path.join(log_path, 'kodi.log')
+            log_old = os.path.join(log_path, 'kodi.old.log')
 
-	def showResult(self, message, url=None):
-		if not url == None:
-			try:
-				fn        = url.split('/')[-2]
-				imagefile = wiz.generateQR(url, fn)
-				#imagefile = os.path.join(QRCODES,'%s.png' % fn)
- 				#qrIMG     = pyqrcode.create(url)
-				#qrIMG.png(imagefile, scale=10)
-				qr = QRCode( "loguploader.xml" , ADDON.getAddonInfo('path'), 'DefaultSkin', image=imagefile, text=message)
-				qr.doModal()
-				del qr
-				try:
-					os.remove(imagefile)
-				except: 
-					pass
-			except Exception, e:
-				wiz.log(str(e), xbmc.LOGNOTICE)
-				confirm   = DIALOG.ok(ADDONTITLE, "[COLOR %s]%s[/COLOR]" % (COLOR2, message))
-		else:
-			confirm   = DIALOG.ok(ADDONTITLE, "[COLOR %s]%s[/COLOR]" % (COLOR2, message))
+# check for XBMC crashlogs
+        log_crash = None
+        
+        if crashlog_path and os.path.isdir(crashlog_path) and crashfile_match:
+            crashlog_files = [s for s in os.listdir(crashlog_path)
+                              
+                              if os.path.isfile(os.path.join(crashlog_path, s))
+                              and crashfile_match in s]
+            
+            if crashlog_files:
+                # we have crashlogs, get fullpath from the last one by time
+                crashlog_files = self.__sort_files_by_date(crashlog_path,
+                                                           crashlog_files)
+                log_crash = os.path.join(crashlog_path, crashlog_files[-1])
+        
+        found_logs = []
+        
+        if os.path.isfile(log):
+            
+            if version < 14:
+                found_logs.append({
+                    'title': 'xbmc.log',
+                    'path': log
+                })
+            
+            else:
+                found_logs.append({
+                    'title': 'kodi.log',
+                    'path': log
+                })
+        
+        if log_crash and os.path.isfile(log_crash):
+            found_logs.append({
+                'title': 'crash.log',
+                'path': log_crash
+            })
+        
+        return found_logs
 
-if ( __name__ == '__main__' ):
-	Main()
+    def __sort_files_by_date(self, path, files):
+        files.sort(key=lambda f: os.path.getmtime(os.path.join(path, f)))
+        return files
+
+    def __log(self, msg):
+        xbmc_log(u'%s: %s' % (ADDON_TITLE, msg))
+
+
+def _(string_id):
+    if string_id in STRINGS:
+        return addon.getLocalizedString(STRINGS[string_id])
+    
+    else:
+        xbmc_log('String is missing: %s' % string_id)
+        return string_id
+
+
+if __name__ == '__main__':
+    xbmc.executebuiltin('Dialog.Show(busydialog)')
+    Uploader = LogUploader()
+    xbmc.executebuiltin('Dialog.Close(busydialog)')
+    wiz.openS()
