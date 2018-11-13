@@ -1428,7 +1428,7 @@ change:  Better handling of read/write falures and errors to help troubleshootin
     </extension>
 </addon>
 
-    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.0.5" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.0.6" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
@@ -1914,6 +1914,22 @@ change:  Better handling of read/write falures and errors to help troubleshootin
     <description lang="zh">Waveform 是一个简单的可视化效果，它在屏幕上显示两个波形图，分别与音乐左右声道的节拍相呼应。</description>
     <description lang="zh_TW">Waveform是一個簡單的可在屏幕上顯示2波形圖的視覺效果，左右聲道會跟著音樂節拍移動</description>
     <platform>windows</platform>
+  </extension>
+</addon>
+
+<addon id="plugin.program.AtrionWizard" name="Atrions Wizard" version="0.0.5" provider-name="Atrion Darnay">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="default.py">
+    <provides>executable</provides>
+  </extension>
+  <extension point="xbmc.service" library="startup.py" start="startup" />
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">Atrions Wizard</summary>
+    <description lang="en">Atrions Wizard allows you to get access to the latest of Atrions Custom Builds.
+[CR]</description>
+    <platform>all</platform>
   </extension>
 </addon>
 
@@ -3150,7 +3166,7 @@ Documentation: https://github.com/tamland/kodi-plugin-routing</description>
   </extension>
 </addon>
 
-    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.0.5" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.0.6" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
