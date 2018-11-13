@@ -440,6 +440,19 @@ v5.0.15 (2016-11-26) by amet
   </extension>
 </addon>
 
+<addon id="script.common.plugin.cache" name="Common plugin cache" provider-name="TheCollective" version="2.5.10">
+  <requires>
+    <import addon="xbmc.python" version="2.24.0" />
+  </requires>
+  <extension library="default.py" point="xbmc.service" start="startup">
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary lang="en">Common caching api for xbmc plugins.</summary>
+  </extension>
+  <extension library="lib" point="xbmc.python.module" />
+</addon>
+
 <addon id="script.cinemavision" name="CinemaVision" version="1.1.0" provider-name="CinemaVision">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -507,6 +520,37 @@ change:  Better handling of read/write falures and errors to help troubleshootin
   <extension-point id="resource.images" schema="images.xsd"/>
 </addon>
 
+<addon id="context.altmovie.posters" name="Alternative Movie Posters" version="1.0.1" provider-name="Lunatixz">
+    <requires>
+        <import addon="xbmc.python" version="2.25.0"/>
+        <import addon="script.module.simplecache" version="1.0.0"/>
+        <import addon="script.module.beautifulsoup4" version="4.3.2"/>
+    </requires>
+    <extension point="kodi.context.item" library="capture.py">
+        <item>
+            <label>32000</label>
+            <visible>String.IsEqual(ListItem.dbtype,movie)</visible>
+        </item>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <news>v.1.0.1[CR]-Corrected website change.</news>
+        <summary lang="en_GB">The world's largest curated collection of Alternative Movie Posters.</summary>
+        <description lang="en_GB"></description>
+        <platform>all</platform>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 3, June 2007</license>
+        <source>https://github.com/Lunatixz/KODI_Addons/tree/master/context.altmovie.posters</source>
+        <website>https://alternativemovieposters.com/</website>
+        <forum>https://forum.kodi.tv/showthread.php?tid=331142</forum>
+        <assets>
+            <icon>resources/images/icon.png</icon>
+            <fanart>resources/images/fanart.jpg</fanart>
+            <screenshot>resources/images/screenshot01.png</screenshot>
+            <screenshot>resources/images/screenshot02.png</screenshot>
+            <screenshot>resources/images/screenshot03.png</screenshot>
+        </assets>
+    </extension>
+</addon>
+
 <addon id="resource.images.studios.coloured" name="Studio Icons - Coloured" version="0.0.9" provider-name="Team Kodi">
 	<extension point="kodi.resource.images" compile="true" type="studios" />
 	<requires>
@@ -517,6 +561,34 @@ change:  Better handling of read/write falures and errors to help troubleshootin
 		<description lang="en">Coloured Studio Icons</description>
 		<platform>all</platform>
 	</extension>
+</addon>
+
+<addon id="screensaver.system47" name="System 47 - Star Trek LCARS ScreenSaver" version="2.2h" provider-name="Lunatixz">
+    <requires>
+        <import addon="xbmc.python" version="2.25.0"/>
+        <import addon="plugin.video.youtube" version="5.3.10"/>
+        <import addon="script.module.beautifulsoup4" version="4.3.2"/>
+    </requires>
+    <extension point="xbmc.ui.screensaver" library="default.py"/>
+    <extension point="xbmc.python.script"  library="default.py"/>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">System 47 - Star Trek LCARS ScreenSaver</summary>
+        <description lang="en_GB">What is LCARS? LCARS is an acronym for "Library Computer Access and Retrieval System", which is the primary computer system in the universe of Star Trek's Starfleet and Federation. On many close-up shots from the Star Trek TV shows and movies, you can actually see the word, LCARS, on some computer monitor displays. For the fans, LCARS is also often used to refer the graphical displaying interface. There's actually another name for this type of graphical displays. It's "Okudagram". It is named after the inventor, Michael Okuda. Michael created it when he was the scenic art supervisor for the TV show, Star Trek: The Next Generation.</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 3, June 2007</license>
+        <platform>all</platform>
+        <website>http://www.mewho.com/system47/</website>
+        <forum>https://forum.kodi.tv/showthread.php?tid=323285</forum>
+        <source>https://github.com/Lunatixz/screensaver.system47/tree/master</source>
+        <disclaimer lang="en_GB" >Streaming not recommend for metered Internet, choose download option under settings.</disclaimer>
+        <news>v.2.2h[CR}- Added Mute sounds (Enabled by default).</news>
+        <assets>
+            <icon>resources/images/icon.png</icon>
+            <fanart>resources/images/fanart.jpg</fanart>
+            <screenshot>resources/images/screenshot01.png</screenshot>
+            <screenshot>resources/images/screenshot02.png</screenshot>
+            <screenshot>resources/images/screenshot03.png</screenshot>
+        </assets>
+    </extension>
 </addon>
 
 <addon id="script.module.six"
@@ -647,6 +719,40 @@ change:  Better handling of read/write falures and errors to help troubleshootin
     <source>https://github.com/Razzeee/script.module.trakt</source>
     <email></email>
   </extension>
+</addon>
+
+<addon id="script.pseudocinema.poster" version="0.0.2a" name="PseudoCinema Poster" provider-name="Lunatixz">
+    <requires>
+        <import addon="xbmc.python" version="2.14.0"/>
+        <import addon="script.module.pil" version="0.0.1"/>
+        <import addon="script.module.requests" version="2.7.0"/>
+        <import addon="script.module.pyfscache" version="0.9.12"/>
+        <import addon="script.module.simplejson" version="3.3.0"/>
+        <import addon="script.module.beautifulsoup" version="3.2.1"/>
+        <import addon="script.module.metahandler" version="2.9.0"/>
+        <import addon="script.common.plugin.cache" version="2.5.5"/>
+        <import addon="script.artwork.downloader" version="12.0.29"/>
+        <import addon="script.tv.show.next.aired" version="6.0.13"/>
+        <import addon="script.skin.helper.service" version="0.0.43"/>
+        <import addon="script.extendedinfo" version="3.0.1"/>
+        <import addon="plugin.video.youtube" version="5.1.8"/>
+        <import addon="plugin.video.vimeo" version="4.1.4"/>
+    </requires>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en">Virtual Movie Poster</summary>
+        <description lang="en">Virtual Movie Poster</description>
+        <disclaimer lang="en">This software is a BETA release, bugs maybe common until final release.</disclaimer>
+        <platform>all</platform>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 3, June 2007</license>
+        <source>https://github.com/Lunatixz/XBMC_Addons/tree/master/script.pseudocinema.poster</source>
+        <email>pseudotvlive@gmail.com</email>
+        <website>www.pseudotvlive.com</website>
+        <forum>http://pseudotvlive.com/index.php/forum</forum>
+    </extension>
+    <extension point="xbmc.python.script" library="default.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.service" library="service.py" start="startup"/>
 </addon>
 
 <addon id="script.gaia.resources" version="3.2.5" name="Gaia Resources" provider-name="Gaia">
@@ -1441,7 +1547,7 @@ change:  Better handling of read/write falures and errors to help troubleshootin
     </extension>
 </addon>
 
-    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.1.0" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.1.1" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
@@ -1944,6 +2050,81 @@ change:  Better handling of read/write falures and errors to help troubleshootin
 [CR]</description>
     <platform>all</platform>
   </extension>
+</addon>
+
+<addon id="script.tv.show.next.aired" name="TV Show - Next Aired" version="6.0.15" provider-name="Ppic,Frost,ronie,`Black,phil65,WayneD">
+	<requires>
+		<import addon="xbmc.python" version="2.1.0"/>
+		<import addon="script.module.simplejson" version="2.0.10"/>
+	</requires>
+	<extension point="xbmc.python.script" library="default.py">
+		<provides>executable</provides>
+	</extension>
+	<extension point="xbmc.service" library="service.py" start="login"/>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="bg">Информация за предстоящите ТВ сериали.</summary>
+		<summary lang="ca">Agafar informació de les sèries de TV que es retransmetran pròximament.</summary>
+		<summary lang="de">Erhalten Sie Infos über die nächsten Ausstrahlungstermine der Serien in Ihrer Bibliothek. </summary>
+		<summary lang="el">Λήψη πληροφοριών για την Επόμενη Προβολή των Τηλ. Σειρών</summary>
+		<summary lang="en">Get info for TV Shows Next Aired.</summary>
+		<summary lang="en_NZ">Get info for TV Shows Next Aired.</summary>
+		<summary lang="en_US">Get info for TV Shows Next Aired.</summary>
+		<summary lang="es">Obtener información de las siguientes emisiones de series.</summary>
+		<summary lang="es_MX">Obtener información de las siguientes emisiones de series.</summary>
+		<summary lang="fr">Obtenir les prochaines dates de diffusion de vos séries TV.</summary>
+		<summary lang="fr_CA">Obtenir les infos de prochaine diffusion des séries télé.</summary>
+		<summary lang="gl">Obter a info. das Seguintes Emisións das Series de TV.</summary>
+		<summary lang="he">קבל פרטי השידור הבא של תכניות הטלוויזיה.</summary>
+		<summary lang="hr">Nabavite informacije za sljedeću emitiranu TV seriju.</summary>
+		<summary lang="hu">Információ a sorozatok következő vetítési idejéről.</summary>
+		<summary lang="it">Ottieni info per le Serie TV trasmesse prossimamente.</summary>
+		<summary lang="ko">TV 쇼 방송 일정을 가져옵니다.</summary>
+		<summary lang="lt">Gauti TV laidos kitos transliacijos informaciją.</summary>
+		<summary lang="nl">Ophalen info voor komende TV afleveringen.</summary>
+		<summary lang="no">Hent informasjon om kommende TV-programmer.</summary>
+		<summary lang="pl">Pobieraj informacje o odcinkach seriali wkrótce na antenie.</summary>
+		<summary lang="pt">Obter info para Próximas Exibições de Séries TV.</summary>
+		<summary lang="pt_BR">Saiba sobre próximas exibições de séries de TV.</summary>
+		<summary lang="ro">Află despre emisiuni care urmează să fie difuzate</summary>
+		<summary lang="ru">Информация о следующих ТВ передачах.</summary>
+		<summary lang="sl">Pridobi informacije TV oddaj ki se bodo predvajale.</summary>
+		<summary lang="sv">Hämta info för nästa sändning av TV-serier.</summary>
+		<summary lang="zh">获取即将播出的剧集的信息。</summary>
+		<description lang="bg">Сваля информация за предстоящите ТВ сериали. Вече никога няма да пропускате епизод от ТВ сериали, които следите.</description>
+		<description lang="ca">Agafar informació de les sèries de TV que es retransmetran pròximament. No te'n perdràs cap mai més.</description>
+		<description lang="de">TV Show Next Aired liefert Termin-Informationen über die anstehenden Episoden der Serien aus der Datenbank. Dazu gibt es eine Wochenansicht mit allen in der nächsten Woche laufenden Episoden sowie (bei vorhandenem Skin Support) die direkte Integration der Informationen in die Ansichten des jeweiligen Skins. Sie werden nie wieder eine Folge verpassen.</description>
+		<description lang="el">Λήψη πληροφοριών για την Επόμενη Προβολή των Τηλ. Σειρών. Δε θα ξαναχάσετε επεισόδιο ποτέ.</description>
+		<description lang="en">Get info for TV Shows Next Aired. You'll never miss one again.</description>
+		<description lang="en_NZ">Get info for TV Shows Next Aired. You'll never miss one again.</description>
+		<description lang="en_US">Get info for TV Shows Next Aired. You'll never miss one again.</description>
+		<description lang="es">Obtener información de las siguientes emisiones de series. Nunca te perderás una de nuevo.</description>
+		<description lang="es_MX">Obtener información de las siguientes emisiones de series. Nunca te perderás una de nuevo.</description>
+		<description lang="fr">Ce script interroge votre médiathèque puis vas récupérer les infos sur les prochaines diffusions de vos séries. vous n'en manquerez plus aucune.</description>
+		<description lang="fr_CA">Obtenir les infos de prochaine diffusion des séries télé. Vous n'en manquerez plus jamais une.</description>
+		<description lang="gl">Obter a info. das Seguintes Emisións das Series de TV. Non esquecerá ningunha.</description>
+		<description lang="he">קבל פרטי השידור הבא של תכניות הטלוויזיה. לעולם לא תחמיץ שוב פרק.</description>
+		<description lang="hr">Nabavite informacije za sljedeću emitiranu TV seriju. Nikada nećete propustiti nijednu.</description>
+		<description lang="hu">Információ a sorozatok következő vetítési idejéről. Soha nem marad le mégegyszer semmiről.</description>
+		<description lang="it">Ottieni info per le Serie TV trasmesse prossimamente. Non ne perderai più una.</description>
+		<description lang="ko">TV 쇼 방송 일정을 가져옵니다. 놓치는 일은 절대 없을 것입니다.</description>
+		<description lang="lt">Gauti TV laidos kitos transliacijos informaciją. Jūs niekada daugiau jos nepraleisite.</description>
+		<description lang="nl">Ophalen info voor komende TV shows. Je zult ze nooit meer missen.</description>
+		<description lang="no">Få informasjon om neste TV-sending. Du vil aldri gå glipp av en episode igjen.</description>
+		<description lang="pl">Pobieraj informacje o odcinkach seriali wkrótce na antenie. Nigdy już żadnego nie przegapisz.</description>
+		<description lang="pt">Obter info para Próximas Exibições de Séries TV. Nunca mais vai perder uma.</description>
+		<description lang="pt_BR">Saiba sobre próximas exibições de séries de TV. Você nunca perderá um episódio.</description>
+		<description lang="ro">Află despre emisiuni care urmează să fie difuzate. Nu vei mai rata nici una.</description>
+		<description lang="ru">Получает информацию о следующих ТВ передачах. Теперь Вы никогда не пропустите ни одну ТВ передачу.</description>
+		<description lang="sl">Pridobi informacije TV oddaj ki se bodo predvajale. Nikoli več ne boste zamudili nobene epizode.</description>
+		<description lang="sv">Hämta info för nästa sändning av TV-Serie. Du kommer inte att missa en igen.</description>
+		<description lang="zh">获取即将播出的剧集的信息。你不会再错过好节目了。</description>
+		<language></language>
+		<platform>all</platform>
+		<license>GPL v2.0</license>
+		<forum>http://forum.xbmc.org/showthread.php?tid=186090</forum>
+		<website>http://github.com/WayneD/script.tv.show.next.aired</website>
+		<source>https://github.com/WayneD/script.tv.show.next.aired.git</source>
+	</extension>
 </addon>
 
 <addon id="script.module.incursion" name="Incursion Module" version="1.20" provider-name="Incursion">
@@ -3196,7 +3377,7 @@ Documentation: https://github.com/tamland/kodi-plugin-routing</description>
   </extension>
 </addon>
 
-    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.1.0" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.1.1" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
@@ -3761,6 +3942,34 @@ Documentation: https://github.com/tamland/kodi-plugin-routing</description>
 	</extension>
 </addon>
 
+<addon id="repository.supremacy" name="[COLORaqua]supremacy[/COLOR]" version="2.6" provider-name="supremacy">
+	<extension point="xbmc.addon.repository" name="[COLORaqua]supremacy[/COLOR]">
+	<dir>
+		<info compressed="false">https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/addons.xml</info>
+		<checksum>https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/</datadir>
+	</dir>
+	<dir>
+        <info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
+        <checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.githubusercontent.com/jsergio123/zips/master/</datadir>
+    </dir>
+    <dir>
+        <info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
+        <checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
+    </dir>
+		<info compressed="false">http://supremacy.org.uk/zip/plugin/addon.xml</info>
+		<checksum>http://supremacy.org.uk/zip/plugin/addons.xml.md5</checksum>
+		<datadir zip="true">http://supremacy.org.uk/zip/plugin/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>video addon for supremacy</summary>
+		<description>Latest Addon Updates For Supremacy Repository</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
 <addon id="script.gaia.artwork" version="3.0.0" name="Gaia Artwork" provider-name="Gaia">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0"/>
@@ -3974,6 +4183,91 @@ Documentation: https://github.com/tamland/kodi-plugin-routing</description>
 	</extension>
 </addon>
 
+<addon
+    id="script.artwork.downloader"
+    name="Artwork Downloader"
+    version="13.1.0"
+    provider-name="Martijn"
+    >
+  <requires>
+    <import addon="xbmc.python"                 version="2.1.0"/>
+    <import addon="xbmc.json"                   version="6.0.0"/>
+    <import addon="xbmc.addon"                  version="12.0.0"/>
+    <import addon="script.module.simplejson"    version="3.3.0"/>
+    <import addon="script.common.plugin.cache"  version="1.3.0"/>
+  </requires>
+  <extension point="xbmc.python.script"         library="default.py">
+    <provides>executable</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="be">Downloads Artwork for TV shows, Movies and Musicvideos in your library</summary>
+    <summary lang="da">Downloader grafik til TV-serier, Film og Musikvideoer i dit bibliotek</summary>
+    <summary lang="de">Lade Artworks fÃ¼r Filme, Serien und Musikvideos deiner Bibliothek herunter</summary>
+    <summary lang="el">Κατεβάζει Εικόνες για τις Τηλεοπτικές Σειρές, τις Ταινίες και τα Μουσικά Βίντεο της συλλογής σας</summary>
+    <summary lang="en">Downloads Artwork for TV shows, Movies and Musicvideos in your library</summary>
+    <summary lang="es">Descargue Artwork de Series, Pelí­culas y Videoclips a su biblioteca</summary>
+    <summary lang="fr">Téléchargez les Artworks pour les séries TV, les films et les clip vidéo de votre médiathèque</summary>
+    <summary lang="gl">Descargue na súa biblioteca Ilustracións para as Series de TV, Filmes e Vídeos Musicais</summary>
+    <summary lang="he">מורי עטיפות לתוכניות טלויזיה,סרטים,וסרטי מוסיקה בספריה שלך</summary>
+    <summary lang="hr">Preuzimte slike omota TV serija, filmova i glazbenih spotova u vašoj kolekciji</summary>
+    <summary lang="hu">Művészképek letöltése TV műsorok, filmek és videóklipek számára</summary>
+    <summary lang="it">Scarica artwork per Serie TV, Film e Video musicali della tua libreria</summary>
+    <summary lang="ko">라이브러리의 TV 쇼, 영화, 뮤직비디오의 아트워크 다운로드</summary>
+    <summary lang="nl">Download Artwork voor TV series, Films en Muziekvideos in jouw bibliotheek</summary>
+    <summary lang="pl">Pobiera grafiki dla Seriali TV, FilmÃ³w i TeledyskÃ³w z twojej biblioteki</summary>
+    <summary lang="pt">Transfira Artwork de Séries TV, Filmes e Concertos para sua biblioteca</summary>
+    <summary lang="pt_BR">Transferências Artes de Seriados, Filmes e Concertos para suas Coleções.</summary>
+    <summary lang="sk">Sťahuje umeleckú grafiku k TV seriálom, filmom a hudobným videám vo Vašej knižnici</summary>
+    <summary lang="sv">Laddar ner bilder och extramaterial för TV-serierna, filmerna och musikvideorna i ditt bibliotek</summary>
+    <summary lang="zh">下载剧集、电影和音乐电视艺术图片到资料库</summary>
+    <description lang="be">Downloads all available artwork for TV shows, Movies and Musicvideos in your library. Check the options for supported artwork[CR]Artwork sources:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Remark:[CR]Check your skin to see what type of artwork is supported![CR]Each TV Show/Movie must have its own folder![CR]Skin integration:[CR]See readme file</description>
+    <description lang="da">Henter alle tilgængelige illustrationer til TV-serier, Film og Musikvideoer i dit bibliotek. Tjek indstillingerne for at se understøttede illustrationer.[CR]Kilder til illustrationer[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Bemærk:[CR]Tjek dit skin for at se, hvilke typer illustrationer, der understøttes![CR]Hver TV-serie/Film skal have sin egen mappe![CR]Skin-integration:[CR]Se 'readme' fil</description>
+    <description lang="de">Downloadet alle verfügbaren Artworks für TV Sendungen, Filme und Musikvideos in deine Datenbank. Überprüfe die Optionen für nicht unterstützte Artwork[CR]Artworkquellen: [CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Remark:[CR]Überprüfe dein Skin ob Artwork unterstützt wird![CR]Jede TV Sendung/Film braucht seinen eigenen Ordner![CR]Skin Integration:[CR]Siehe Readme Datei</description>
+    <description lang="el">Κατεβάζει όλες τις διαθέσιμες εικόνες για τις Τηλεοπτικές Σειρές, τις Ταινίες και τα Μουσικά Βίντεο της συλλογής σας. Ελέγξτε τις επιλογές για υποστηριζόμενες εικόνες[CR]&#10;Πηγές Εικόνων:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]&#10;Σημείωση:[CR]Ελέγξτε το κέλυφός σας για να δείτε τι είδους εικόνες υποστηρίζονται![CR]Κάθε Σειρά/Ταινία πρέπει να έχει το δικό της φάκελο![CR]&#10;Για ενσωμάτωση στο κέλυφος:[CR]Δείτε το αρχείο readme</description>
+    <description lang="en">Downloads all available artwork for TV shows, Movies and Musicvideos in your library. Check the options for supported artwork[CR]Artwork sources:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Remark:[CR]Check your skin to see what type of artwork is supported![CR]Each TV Show/Movie must have its own folder![CR]Skin integration:[CR]See readme file</description>
+    <description lang="es">Descarga artwork de programas de televisión, películas y videos musicales en su biblioteca. Marque las opciones correspondientes compatible d artwork[CR]Artwork:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Remark:[CR]Check su piel para ver qué tipo de obra de arte es compatible![CR]Cada Show de TV\/película debe tener su propia carpeta![CR]Integración de la piel: [CR] consulte el archivo Léame</description>
+    <description lang="fr">Téléchargez tous les artworks disponibles pour les séries TV, les films et les vidéos musicales de votre médiathèque. Regardez les options pour les artsworks supportés[CR]Sources des Artworks : [CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Remarques : [CR]Véifiez votre thême pour savoir quel type d'artwork est supporté ![CR]Chaque Série TV/Film doit avoir son propre dossier ![CR]Intégration dans un thême :[CR]Regardez le fichier readme.txt</description>
+    <description lang="gl">Descarga todas as ilustracións dispoñíbeis para as series de TV, filmes e vídeos musicais da súa biblioteca. Verifique as opcións de soporte de ilustracións[CR]Fontes das ilustracións:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Lembre:[CR]Verifique o seu tema para ver que tipo de ilustración é soportada.[CR]Cada Serie de TV/Filme debe ter o seu propio cartafol.[CR]Integración no tema:[CR]Ver o ficheiro readme</description>
+    <description lang="hr">Preuzmi sve dostupne slike omota za TV serije, filmove i glazbene spotove u vašoj zbirci. Provjerite mogućnosti za podržane slike omota[CR]Izvori slika omota:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Napomena:[CR]Provjerite vašu presvlaku da bi vidjeli koja vrsta presvlake je podržana![CR]Svaka TV serija/Film mora imati svoju vlastitu mapu![CR]Integracija presvlake:[CR]Pogledajte datoteku uputa</description>
+    <description lang="hu">Letölti az összes rendelkezésre álló művészképet az adatbázisában található TV-műsorokhoz, filmekhez és videóklipekhez. Ellenőrizze a beállításokat a támogatott művészképekhez[CR]Művészkép források:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Megjegyzés:[CR]Ellenőrizze, hogy az alkalmazott skin miyen művészképeket támogat![CR]Minden filmnek/TV-műsornak saját mappában kell lennie![CR]Skin integráció:[CR]Olvassa fel a readme fájlt</description>
+    <description lang="it">Scarica tutti gli artwork disponibili per le serie TV, i film ed i video musicali presenti nella libreria. Controlla le opzioni per gli artwork supportati[CR]Fonti artwork:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Nota:[CR]Controlla la tua skin per vedere che tipi artwork sono supportati![CR]Ogni Serie TV/Film deve avere una cartella propria![CR]Integrazione skin:[CR]Vedi file readme</description>
+    <description lang="ko">라이브러리에 있는 TV 쇼, 영화, 뮤직비디오의 사용 가능한 모든 아트워크를 다운로드합니다. 지원하는 아트워크는 옵션을 확인하세요[CR]아트워크 소스:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR] 참고:[CR]사용하는 스킨이 어떤 형식의 아트워크를 지원하는지 확인하세요![CR]각 TV 쇼/영화는 자신의 폴더에 있어야 합니다![CR]스킨 통합:[CR]readme 파일 참고</description>
+    <description lang="nl">Download alle beschikbare artwork voor TV series, Films en Muziekvideos in jouw bibliotheek. Bekijk de opties voor ondersteunde artwork[CR]Artwork bronnen:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Opmerking:[CR]Controleer jouw skin om te bepalen welke artwork deze ondersteund![CR]Elke TV serie/Film moet zich in zijn eigen folder bevinden![CR]Skin integratie:[CR]Kijk in de readme bestand</description>
+    <description lang="pl">Pobierz wszystkie dostępne grafiki dla seriali TV, filmów i teledysków ze swojej biblioteki. Sprawdź ustawienia aby zobaczyć wszystkie dostępne grafiki[CR]&#10;    Źródła grafik:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]&#10;    Uwaga:[CR]Sprawdź jakie rodzaje grafik wspiera twoja skóra![CR]Każdy Serial TV/Film musi być w osobnym folderze![CR]&#10;    Integracja ze skórą:[CR]Przeczytaj plik readme&#10;    </description>
+    <description lang="pt">Transfere toda a artwork disponível para Séries TV, Filmes e Vídeoclipes na sua biblioteca. Verifique a artwork suportada nas opções.[CR]Fontes de Artwork:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Lembre-se:[CR]Verifique o seu tema para ver que tipo de artwork é suportada![CR]Cada Série TV/Filme deve ter a sua própria pasta![CR]Integração no tema:[CR]veja o ficheiro readme</description>
+    <description lang="pt_BR">Download todas as artworks disponíveis para Seriados, Filmes e Concertos em sua coleção. Verifique as opções de artes suportadas. &#10;Artwork fontes:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]Lembrete:[CR]Verifique se sua skin tem suporte para os tipos de artes disponíveis![CR]Cada Seriado/Filme ou Concerto deve estar em pastas próprias![CR]Skin integração:[CR]Veja o arquivo leia-me.</description>
+    <description lang="sk">Sťahuje umeleckú grafiku k TV seriálom, filmom a hudobným videám vo Vašej knižnici. Na overenie podporovanej umeleckej grafiky pozrite nastavenia.&#10;Zdroje umeleckej grafiky:&#10;www.fanart.tv&#10;www.thetvdb.com&#10;www.themoviedb.org&#10;Poznámka:&#10;Aby ste si overili aká umelecká grafika je podporovaná, skontrolujte Váš Vzhľad!&#10;Každý TV seriál / film musí byť v samostatnom priečinku!&#10;Integrácia so vzhľadom:&#10;Pozri readme súbor</description>
+    <description lang="sv">Laddar ner alla tillgängliga omslag, bakgrunder etc för TV-serier, Filmer och Musikvideos till ditt bibliotek. Kontrollera inställningar för vad som stöds[CR] Omslag, bakgrunder etc hämtas från följande resurser:[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR] Remark:[CR]Kontrollera skalinställningar för att ta reda på vad som stöds![CR]Varje TV-serie/Film måste ha sin egen mapp![CR] Skalintegration:[CR]See readme file</description>
+    <description lang="zh">下载剧集、电影和音乐电视的所有可用艺术图片到资料库。查看支持的艺术图片选项[CR]&#10;艺术图片来源：[CR]www.fanart.tv[CR]www.thetvdb.com[CR]www.themoviedb.org[CR]&#10; 备注：[CR]查看你的皮肤了解支持什么类型的艺术图片！[CR]每一个剧集/电影必须保存在单独的文件夹中！[CR]&#10; 皮肤集成：[CR]参见readme文件</description>
+    <disclaimer lang="be">For bugs, requests or general questions visit the Artwork Downloader thread on the XBMC forum.</disclaimer>
+    <disclaimer lang="da">Ved fejl, forespørgsler eller generelle spørgsmål besøg Artwork Downloader-tråden i XBMCs forum.</disclaimer>
+    <disclaimer lang="de">FÃ¼r Fehler, VorschlÃ¤ge oder alggemeine Fragen, besuche das Artwork Downloader-Thema im XBMC-Forum (englisch).</disclaimer>
+    <disclaimer lang="el">Για προβλήματα, αιτήματα ή γενικές ερωτήσεις επισκεφθείτε το θέμα του Artwork Downloader στο forum του XBMC.</disclaimer>
+    <disclaimer lang="en">For bugs, requests or general questions visit the Artwork Downloader thread on the XBMC forum.</disclaimer>
+    <disclaimer lang="es">Para informar de errores, hacer peticiones o preguntas visiten el hilo Artwork Downloader en el foro de XBMC.</disclaimer>
+    <disclaimer lang="fr">Pour bugs, demandes ou questions générales visiter le thread Artwork Downloader sur le forum XBMC.</disclaimer>
+    <disclaimer lang="gl">Para erros, solicitudes ou preguntas en xeral visite o fio do Artwork Downloader no foro do XBMC.</disclaimer>
+    <disclaimer lang="he">לדווח תקלות,בקשות או שאלות כלליות בקר ברשימת artwork downloader בפורום של XBMC.</disclaimer>
+    <disclaimer lang="hr">Za greške, zahtjeve ili uobičajena pitanja posjetite Artwork Downloader na XBMC forumu.</disclaimer>
+    <disclaimer lang="hu">Hibabejelentéshez, kérésekhez vagy általános kérdésekkel kapcsolatban keresse az Artwork Downloader témát az XBMC fórumon.</disclaimer>
+    <disclaimer lang="it">Per la segnalazione di bug, richieste o domande generali visita il thread Artwork Downloader sul forum di XBMC.</disclaimer>
+    <disclaimer lang="ko">버그, 요청사항 및 일반적인 질문은  XBMC 포럼의 Artwork Downloader 글타래를 찾아 주세요.</disclaimer>
+    <disclaimer lang="nl">Voor fouten, verzoeken of algemene vragen kan je terecht op Artwork Downloader thread op het XBMC forum.</disclaimer>
+    <disclaimer lang="pl">By zgÅ‚osiÄ‡ bÅ‚Ä…d, proÅ›bÄ™ lub zadaÄ‡ pytanie odwiedÅº wÄ…tek poÅ›wiÄ™cony Artwork Downladerowi na forum XBMC.</disclaimer>
+    <disclaimer lang="pt">Para reportar erros, requisitar algo ou perguntar algo sobre o add-on, visite o tópico do Artwork Downloader no fórum do XBMC.</disclaimer>
+    <disclaimer lang="pt_BR">Para erros, requisições ou questões gerais visite o tópico do Artwork Downloader no Fórum XBMC.org</disclaimer>
+    <disclaimer lang="sk">Pre chyby, požiadavky alebo všeobecné otázky navštívte "Artwork Downloader" vlákno na XBMC fóre.</disclaimer>
+    <disclaimer lang="sv">För buggar, önskemål och frågor, besök Artwork Downloader tråden på XBMCs forum.</disclaimer>
+    <disclaimer lang="zh">错误报告、功能需求及常见问题，请访问XBMC论坛的Artwork Downloader专贴。</disclaimer>
+    <language></language>
+    <platform>all</platform>
+    <website></website>
+    <source>https://github.com/XBMC-Addons/script.artwork.downloader</source>
+    <forum>http://forum.xbmc.org/showthread.php?tid=114633</forum>
+    <email></email>
+  </extension>
+</addon>
+
 <addon id="xbmc.pvr" version="5.2.1" provider-name="Team-Kodi">
   <backwards-compatibility abi="5.2.1"/>
   <requires>
@@ -4124,6 +4418,29 @@ Documentation: https://github.com/tamland/kodi-plugin-routing</description>
 	</extension>
 </addon>
 
+<addon id="plugin.video.vimeo" name="Vimeo" version="4.1.4" provider-name="bromix">
+	<requires>
+		<import addon="xbmc.python" version="2.14.0"/>
+	</requires>
+	<extension point="xbmc.python.pluginsource" library="default.py">
+		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Plugin for Vimeo</summary>
+        <description lang="en">Vimeo is a one of the biggest video-sharing websites of the world.</description>
+		<summary lang="de">Plugin für Vimeo</summary>
+        <description lang="de">Vimeo ist ein eines der größten Video-Sharing-Websites der Welt.</description>
+        <disclaimer lang="en"></disclaimer>
+		<language></language>
+		<platform>all</platform>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+		<forum>http://forum.kodi.tv/showthread.php?tid=220437</forum>
+		<website>www.vimeo.com</website>
+		<email>bromix at gmx dot net</email>
+		<source>https://github.com/bromix/plugin.video.vimeo</source>
+	</extension>
+</addon>
+
 <addon
   id="visualization.milkdrop2"
   version="2.1.0"
@@ -4271,6 +4588,23 @@ Documentation: https://github.com/tamland/kodi-plugin-routing</description>
     <description lang="en">AAC Audio Encoder</description>
     <platform>all</platform>
   </extension>
+</addon>
+
+<addon id="script.module.pyfscache" version="0.9.14" name="File Cache" provider-name="Lunatixz">
+    <requires>
+        <import addon="xbmc.python" version="2.14.0" />
+    </requires>
+    <extension library="lib" point="xbmc.python.module" />
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_US"></summary>
+        <description lang="en_US">packed for kodi from https://github.com/jcstroud/pyfscache</description>
+        <disclaimer lang="en_US">packed for kodi from https://github.com/jcstroud/pyfscache</disclaimer>
+        <forum></forum>
+        <website>http://www.jamesstroud.com/software/pyfscache/</website>
+        <license>BSD</license>
+        <platform>all</platform>
+        <source>https://github.com/jcstroud/pyfscache</source>
+    </extension>
 </addon>
 
 <addon id="skin.CarPc-Carbon" version="2.0.4" name="CarPc-Carbon" provider-name="Team Kodi-idorel77">
@@ -4816,34 +5150,6 @@ Documentation: https://github.com/tamland/kodi-plugin-routing</description>
 		<license>GPL 3.0</license>
 		<website>https://gaiakodi.com</website>
 		<forum>https://gaiakodi.com/?support</forum>
-	</extension>
-</addon>
-
-<addon id="repository.supremacy" name="[COLORaqua]supremacy[/COLOR]" version="2.6" provider-name="supremacy">
-	<extension point="xbmc.addon.repository" name="[COLORaqua]supremacy[/COLOR]">
-	<dir>
-		<info compressed="false">https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/addons.xml</info>
-		<checksum>https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/addons.xml.md5</checksum>
-		<datadir zip="true">https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/</datadir>
-	</dir>
-	<dir>
-        <info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
-        <checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
-        <datadir zip="true">https://raw.githubusercontent.com/jsergio123/zips/master/</datadir>
-    </dir>
-    <dir>
-        <info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
-        <checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
-        <datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
-    </dir>
-		<info compressed="false">http://supremacy.org.uk/zip/plugin/addon.xml</info>
-		<checksum>http://supremacy.org.uk/zip/plugin/addons.xml.md5</checksum>
-		<datadir zip="true">http://supremacy.org.uk/zip/plugin/</datadir>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary>video addon for supremacy</summary>
-		<description>Latest Addon Updates For Supremacy Repository</description>
-		<platform>all</platform>
 	</extension>
 </addon>
 
