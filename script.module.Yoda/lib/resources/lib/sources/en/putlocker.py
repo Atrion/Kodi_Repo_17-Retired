@@ -24,8 +24,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['putlockers.movie']
-        self.base_link = 'https://www2.putlockerr.is'
+        self.domains = ['putlockerr.is','putlockers.movie'] 
+        self.base_link = 'https://www5.putlockerr.is'
         self.search_link = '/embed/%s/'
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -34,7 +34,7 @@ class source:
             return url
         except:
             return
-		
+
     def sources(self, url, hostDict, hostprDict):
         try:
             sources = []

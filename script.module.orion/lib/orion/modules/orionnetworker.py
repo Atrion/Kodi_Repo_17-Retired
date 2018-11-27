@@ -24,6 +24,7 @@
 # Class for making network requests.
 ##############################################################################
 
+import ssl
 import random
 import urllib2
 from orion.modules.oriontools import *
@@ -157,6 +158,7 @@ class OrionNetworker:
 					secureContext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
 					self.mResponse = urllib2.urlopen(request, context = secureContext, timeout = timeout)
 				except:
+					if self.mDebug: OrionTools.error()
 					# SPMC (Python < 2.7.8) does not support TLS. Try to do it wihout SSL/TLS, otherwise bad luck.
 					self.mResponse = urllib2.urlopen(request, timeout = timeout)
 

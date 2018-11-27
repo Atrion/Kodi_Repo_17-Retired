@@ -33,6 +33,7 @@ from orion.modules.orioninterface import *
 from orion.modules.orionstream import *
 from orion.modules.oriondatabase import *
 
+OrionSettingsCache = None
 OrionSettingsSilent = False
 OrionSettingsBackup = False
 
@@ -144,12 +145,74 @@ class OrionSettings:
 	def _database(self):
 		return OrionDatabase.instance(self.DatabaseSettings, default = OrionTools.pathJoin(OrionTools.addonPath(), 'resources'))
 
+	#############################################################################
+	# CACHE
+	##############################################################################
+
+	@classmethod
+	def cache(self):
+		global OrionSettingsCache
+		if OrionSettingsCache == None:
+			OrionSettingsCache = {
+				'enabled' : OrionTools.toBoolean(OrionTools.addon().getSetting('general.settings.cache')),
+				'static' : {
+					'data' : None,
+					'values' : {},
+				},
+				'dynamic' : {
+					'data' : None,
+					'values' : {},
+				},
+			}
+		return OrionSettingsCache
+
+	@classmethod
+	def cacheClear(self):
+		global OrionSettingsCache
+		OrionSettingsCache = None
+
+	@classmethod
+	def cacheEnabled(self):
+		return self.cache()['enabled']
+
+	@classmethod
+	def cacheGet(self, id, raw, database = False, obfuscate = False):
+		cache = self.cache()
+		if raw:
+			if cache['static']['data'] == None: cache['static']['data'] = OrionTools.fileRead(self.pathAddon())
+			data = cache['static']['data']
+			values = cache['static']['values']
+			parameter = self.ParameterDefault
+		else:
+			if cache['dynamic']['data'] == None: cache['dynamic']['data'] = OrionTools.fileRead(self.pathProfile())
+			data = cache['dynamic']['data']
+			values = cache['dynamic']['values']
+			parameter = self.ParameterValue
+
+		if id in values:
+			return values[id]
+		elif database:
+			result = self._getDatabase(id = id)
+			if obfuscate: result = OrionTools.obfuscate(result)
+			values[id] = result
+			return result
+		else:
+			result = self.getRaw(id = id, parameter = parameter, data = data)
+			if result == None: result = OrionTools.addon().getSetting(id)
+			if obfuscate: result = OrionTools.obfuscate(result)
+			values[id] = result
+			return result
+
+	@classmethod
+	def cacheSet(self, id, value):
+		self.cache()['dynamic']['values'][id] = value
+
 	##############################################################################
 	# SET
 	##############################################################################
 
 	@classmethod
-	def set(self, id, value, commit = True):
+	def set(self, id, value, commit = True, cached = False):
 		if value is True or value is False:
 			value = OrionTools.toBoolean(value, string = True)
 		elif OrionTools.isStructure(value):
@@ -160,6 +223,7 @@ class OrionSettings:
 		else:
 			value = str(value)
 		OrionTools.addon().setSetting(id = id, value = value)
+		if cached or self.cacheEnabled(): self.cacheSet(id = id, value = value)
 		if commit: self._backupAutomatic(force = True)
 
 	##############################################################################
@@ -172,8 +236,10 @@ class OrionSettings:
 		except: return None
 
 	@classmethod
-	def get(self, id, raw = False, obfuscate = False):
-		if raw:
+	def get(self, id, raw = False, obfuscate = False, cached = True, database = False):
+		if cached and self.cacheEnabled():
+			return self.cacheGet(id = id, raw = raw, database = database, obfuscate = obfuscate)
+		elif raw:
 			return self.getRaw(id = id, obfuscate = obfuscate)
 		else:
 			self._backupAutomatic()
@@ -548,7 +614,7 @@ class OrionSettings:
 
 	@classmethod
 	def _backupAutomatic(self, force = False):
-		if not self._backupAutomaticValid() or OrionTools.toBoolean(OrionTools.addon().getSetting(id = 'general.backup.automatic')):
+		if not self._backupAutomaticValid() or OrionTools.toBoolean(OrionTools.addon().getSetting(id = 'general.settings.backup')):
 			if not self._backupAutomaticImport(force = force):
 				self._backupAutomaticExport(force = force)
 
@@ -602,6 +668,7 @@ class OrionSettings:
 			# Get updated user status
 			OrionInterface.loaderShow()
 			OrionUser.instance().update()
+			self.cacheClear()
 			OrionInterface.loaderHide()
 
 			if counter > 0:

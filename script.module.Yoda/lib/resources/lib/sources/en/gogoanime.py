@@ -10,8 +10,7 @@
 
 # Addon Name: Yoda
 # Addon id: plugin.video.Yoda
-# Addon Provider: MuadDib
-
+# Addon Provider: Supremacy
 
 import re,traceback,urllib,urlparse,json
 
@@ -28,7 +27,7 @@ class source:
         self.language = ['en']
         self.genre_filter = ['animation', 'anime']
         self.domains = ['gogoanimemobile.com', 'gogoanimemobile.net', 'gogoanime.io']
-        self.base_link = 'http://ww1.gogoanime.io'
+        self.base_link = 'https://gogoanimes.co/'
         self.search_link = '/search.html?keyword=%s'
         self.episode_link = '/%s-episode-%s'
 

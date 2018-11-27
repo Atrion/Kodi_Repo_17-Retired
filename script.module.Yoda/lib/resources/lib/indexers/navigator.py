@@ -63,7 +63,7 @@ class navigator:
 
         if self.getMenuEnabled('navi.channels') == True:
             self.addDirectoryItem(32016, 'tvNetworks', 'networks.png', 'DefaultTVShows.png')
-
+	self.addDirectoryItem(32632, 'boxsetsNavigator', 'boxsets.png', 'boxsets.png')
         self.addDirectoryItem(32008, 'toolNavigator', 'tools.png', 'DefaultAddonProgram.png')
 
         downloads = True if control.setting('downloads') == 'true' and (len(control.listDir(control.setting('movie.download.path'))[0]) > 0 or len(control.listDir(control.setting('tv.download.path'))[0]) > 0) else False
@@ -284,7 +284,7 @@ class navigator:
         self.addDirectoryItem(32614, 'clearMetaCache', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32613, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32609, 'Resolveurl', 'urlresolver.png', 'DefaultAddonProgram.png')
 
         self.endDirectory()
 

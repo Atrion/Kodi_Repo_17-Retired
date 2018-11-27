@@ -12,14 +12,17 @@
 # Addon id: plugin.video.Yoda
 # Addon Provider: Supremacy
 
-import re,traceback,urllib,urlparse
+import re
+import urllib
+import urlparse
 
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import debrid
-from resources.lib.modules import dom_parser2
-from resources.lib.modules import log_utils
 from resources.lib.modules import source_utils
+from resources.lib.modules import dom_parser2
+from resources.lib.modules import cfscrape
+
 
 class source:
     def __init__(self):
@@ -28,6 +31,7 @@ class source:
         self.domains = ['ultrahdindir.com']
         self.base_link = 'http://ultrahdindir.com'
         self.post_link = '/index.php?do=search'
+        self.scraper = cfscrape.create_scraper()
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
@@ -35,8 +39,6 @@ class source:
             url = urllib.urlencode(url)
             return url
         except:
-            failure = traceback.format_exc()
-            log_utils.log('UltraHD - Exception: \n' + str(failure))
             return
 
     def sources(self, url, hostDict, hostprDict):
@@ -60,7 +62,7 @@ class source:
 
             post = 'do=search&subaction=search&search_start=0&full_search=0&result_from=1&story=%s' % urllib.quote_plus(query)
 
-            r = client.request(url, post=post)
+            r = self.scraper.get(url, post=post).content
             r = client.parseDOM(r, 'div', attrs={'class': 'box-out margin'})
             r = [(dom_parser2.parse_dom(i, 'div', attrs={'class':'news-title'})) for i in r if data['imdb'] in i]
             r = [(dom_parser2.parse_dom(i[0], 'a', req='href')) for i in r if i]
@@ -76,7 +78,7 @@ class source:
 
                     s = re.findall('((?:\d+\.\d+|\d+\,\d+|\d+)\s*(?:GB|GiB|Gb|MB|MiB|Mb))', name)
                     s = s[0] if s else '0'
-                    data = client.request(item[0])
+                    data = self.scraper.get(item[0]).content
                     data = dom_parser2.parse_dom(data, 'div', attrs={'id': 'r-content'})
                     data = re.findall('\s*<b><a href=.+?>(.+?)</b>.+?<u><b><a href="(.+?)".+?</a></b></u>',
                                       data[0].content, re.DOTALL)
@@ -85,6 +87,8 @@ class source:
                     for name, url, size in u:
                         try:
                             if '4K' in name:
+                                quality = '4K'
+                            elif '2160p' in name:
                                 quality = '4K'
                             elif '1080p' in name:
                                 quality = '1080p'
@@ -117,7 +121,6 @@ class source:
 
                             if 'ftp' in url: host = 'COV'; direct = True;
                             else: direct = False; host= 'turbobit.net'
-                            
 
                             host = client.replaceHTMLCodes(host)
                             host = host.encode('utf-8')
@@ -132,8 +135,6 @@ class source:
 
             return sources
         except:
-            failure = traceback.format_exc()
-            log_utils.log('UltraHD - Exception: \n' + str(failure))
             return sources
 
     def resolve(self, url):

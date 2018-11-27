@@ -10,7 +10,7 @@
 
 # Addon Name: Yoda
 # Addon id: plugin.video.Yoda
-# Addon Provider: MuadDib
+# Addon Provider: Supremacy
 
 import urllib,traceback,urlparse,json
 

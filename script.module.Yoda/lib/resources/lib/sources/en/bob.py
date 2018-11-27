@@ -12,7 +12,6 @@
 # Addon id: plugin.video.Yoda
 # Addon Provider: Supremacy
 
-
 import re,traceback,urllib,urlparse,base64
 import requests
 

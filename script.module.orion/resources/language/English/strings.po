@@ -750,7 +750,43 @@ msgid "Unknown Size"
 msgstr ""
 
 msgctxt "#32185"
-msgid "Automatic Backup"
+msgid "Settings Backup"
+msgstr ""
+
+msgctxt "#32186"
+msgid "Advanced"
+msgstr ""
+
+msgctxt "#32187"
+msgid "Server Connection"
+msgstr ""
+
+msgctxt "#32188"
+msgid "Main Domain Name"
+msgstr ""
+
+msgctxt "#32189"
+msgid "Main IP Address"
+msgstr ""
+
+msgctxt "#32190"
+msgid "Custom Domain Name"
+msgstr ""
+
+msgctxt "#32191"
+msgid "Custom IP Address"
+msgstr ""
+
+msgctxt "#32192"
+msgid "Domain Name"
+msgstr ""
+
+msgctxt "#32193"
+msgid "IP Address"
+msgstr ""
+
+msgctxt "#32194"
+msgid "Settings Cache"
 msgstr ""
 
 ##############################################################################
@@ -1062,5 +1098,25 @@ msgid "Include streams with an unknown file size."
 msgstr ""
 
 msgctxt "#34048"
-msgid "Automatically backup the settings and restore them if they become corrupt."
+msgid "Automatically backup the addon settings and restore them if they become corrupt."
+msgstr ""
+
+msgctxt "#34049"
+msgid "This section is for advanced users only. Use these options if you know what you are doing, since changing them might cause the addon to stop working."
+msgstr ""
+
+msgctxt "#34050"
+msgid "The manner in which the connection is established to the API. This can be useful if your VPN, ISP, or DNS is blocking the Orion domain. Connect via the main domain name or IP address, or by specifying a custom location."
+msgstr ""
+
+msgctxt "#34051"
+msgid "The domain name of the server."
+msgstr ""
+
+msgctxt "#34052"
+msgid "The IP address of the server."
+msgstr ""
+
+msgctxt "#34053"
+msgid "Cache the addon settings to allow for faster settings access. Toggle this option if the addon keeps resetting."
 msgstr ""

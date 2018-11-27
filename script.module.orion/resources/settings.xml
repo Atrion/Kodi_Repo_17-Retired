@@ -5,7 +5,8 @@
 		<setting id="internal.backup" type="bool" default="false" visible="false" />
 
 		<setting id="internal.link" type="text" default="https://orionoid.com" visible="false" />
-		<setting id="internal.api.link" type="text" default="https://api.orionoid.com" visible="false" />
+		<setting id="internal.domain" type="text" default="orionoid.com" visible="false" />
+		<setting id="internal.ip" type="text" default="188.241.58.223" visible="false" />
 
 		<setting id="internal.api.orion" type="text" default="PUFGVkNaa1ZycDFiWFprVVdaMWFXeEdWc3AwVlZwV1U0SmxWYWRVWUdoV1ZXWmxXR3BWVjFNbFZzbEVNTlZsVlhKVmJvbGxWR1oxVlNkbFZQVkZiYU5sVEVaa1JXdG1XdmRsUlNabFZzWlZV" visible="false" />
 		<setting id="internal.api.access" type="text" default="" visible="false" />
@@ -44,10 +45,23 @@
 		<setting id="general.scraping.quality" label="32117" type="enum" lvalues="32120|32121|32122|32123|32124|32125|32126|32127|32128|32129|32130|32131|32132|32133" default="0" subsetting="true" visible="eq(-4,1)" />
 			<setting type="text" default="[B]$ADDON[script.module.orion 32066][/B]" label="[LIGHT]  $ADDON[script.module.orion 34045]  [/LIGHT]" visible="eq(-5,1) + eq(-23,true)" />
 
-		<setting type="lsep" label="[UPPERCASE][B]$ADDON[script.module.orion 32170][/B][/UPPERCASE]" />
+		<setting type="lsep" label="[UPPERCASE][B]$ADDON[script.module.orion 32005][/B][/UPPERCASE]" />
 		<setting type="sep" />
-		<setting id="general.backup.automatic" label="32185" type="bool" default="true" />
-			<setting type="text" default="[B]$ADDON[script.module.orion 32066][/B]" label="[LIGHT]  $ADDON[script.module.orion 34048]  [/LIGHT]" visible="eq(-27,true)" />
+		<setting id="general.settings.cache" label="32194" type="bool" default="true" />
+			<setting type="text" default="[B]$ADDON[script.module.orion 32066][/B]" label="[LIGHT]  $ADDON[script.module.orion 34053]  [/LIGHT]" visible="eq(-27,true)" />
+		<setting id="general.settings.backup" label="32185" type="bool" default="true" />
+			<setting type="text" default="[B]$ADDON[script.module.orion 32066][/B]" label="[LIGHT]  $ADDON[script.module.orion 34048]  [/LIGHT]" visible="eq(-29,true)" />
+
+		<setting type="lsep" label="[UPPERCASE][B]$ADDON[script.module.orion 32186][/B][/UPPERCASE]" />
+		<setting type="sep" />
+		<setting id="general.advanced.enabled" label="32096" type="bool" default="false" />
+			<setting type="text" default="[B]$ADDON[script.module.orion 32066][/B]" label="[LIGHT]  $ADDON[script.module.orion 34049]  [/LIGHT]" visible="eq(-33,true)" />
+		<setting id="general.advanced.connection" label="32187" type="enum" lvalues="32188|32189|32190|32191" default="0" visible="eq(-2,true)" />
+			<setting type="text" default="[B]$ADDON[script.module.orion 32066][/B]" label="[LIGHT]  $ADDON[script.module.orion 34050]  [/LIGHT]" visible="eq(-3,true) + eq(-35,true)" />
+		<setting id="general.advanced.connection.domain" label="32192" type="text" default="orionoid.com" subsetting="true" visible="eq(-4,true) + eq(-2,2)" />
+			<setting type="text" default="[B]$ADDON[script.module.orion 32066][/B]" label="[LIGHT]  $ADDON[script.module.orion 34051]  [/LIGHT]" visible="eq(-5,true) + eq(-3,2) + eq(-37,true)" />
+		<setting id="general.advanced.connection.ip" label="32193" type="ipaddress" default="188.241.58.223" subsetting="true" visible="eq(-6,true) + eq(-4,3)" />
+			<setting type="text" default="[B]$ADDON[script.module.orion 32066][/B]" label="[LIGHT]  $ADDON[script.module.orion 34052W]  [/LIGHT]" visible="eq(-7,true) + eq(-5,3) + eq(-39,true)" />
 
 	</category>
 	<category label = "32017">

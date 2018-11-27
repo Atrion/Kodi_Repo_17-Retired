@@ -712,11 +712,11 @@ msgid "DEBRID-SERVICE"
 msgstr ""
 
 msgctxt "#32539"
-msgid "Configure Debrid Services in URLResolver Settings."
+msgid "Configure Debrid Services in ResolveUrl Settings."
 msgstr ""
 
 msgctxt "#32540"
-msgid "URLResolver Settings"
+msgid "ResolveUrl Settings"
 msgstr ""
 
 msgctxt "#32541"
@@ -1021,4 +1021,8 @@ msgstr ""
 
 msgctxt "#32631"
 msgid "Documentaries"
+msgstr ""
+
+msgctxt "#32632"
+msgid "Boxsets"
 msgstr ""

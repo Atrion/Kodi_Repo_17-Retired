@@ -173,7 +173,7 @@ class OrionApi:
 				OrionTools.log('ORION API REQUEST: ' + OrionTools.jsonTo(query))
 
 			networker = OrionNetworker(
-				link = OrionSettings.getString('internal.api.link', raw = True),
+				link = OrionTools.linkApi(),
 				parameters = parameters,
 				timeout = max(30, OrionSettings.getInteger('general.scraping.timeout')),
 				agent = OrionNetworker.AgentOrion,

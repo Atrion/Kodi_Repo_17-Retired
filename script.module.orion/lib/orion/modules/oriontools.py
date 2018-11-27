@@ -611,6 +611,20 @@ class OrionTools:
 		return OrionSettings.getString('internal.link', raw = True)
 
 	@classmethod
+	def linkApi(self):
+		from orion.modules.orionsettings import OrionSettings
+		base = None
+		if OrionSettings.getBoolean('general.advanced.enabled'):
+			connection = OrionSettings.getInteger('general.advanced.connection')
+			if connection == 0: base = OrionSettings.getString('internal.domain', raw = True)
+			elif connection == 1: base = OrionSettings.getString('internal.ip', raw = True)
+			elif connection == 2: base = OrionSettings.getString('general.advanced.connection.domain')
+			elif connection == 3: base = OrionSettings.getString('general.advanced.connection.ip')
+		else:
+			base = OrionSettings.getString('internal.domain', raw = True)
+		return 'https://%s/api' % base
+
+	@classmethod
 	def linkIs(self, link, magnet = True):
 		if magnet and link.startswith('magnet:'): return True
 		else: return link.startswith('http:') or link.startswith('https:') or link.startswith('ftp:') or link.startswith('ftps:')
