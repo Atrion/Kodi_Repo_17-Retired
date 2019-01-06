@@ -66,6 +66,7 @@ class OrionApi:
 	ParameterTotal = 'total'
 	ParameterTime = 'time'
 	ParameterDirection = 'direction'
+	ParameterVersion = 'version'
 	ParameterAll = 'all'
 
 	StatusUnknown = 'unknown'
@@ -348,6 +349,7 @@ class OrionApi:
 
 	def notificationRetrieve(self, time = None):
 		parameters = {}
+		parameters[self.ParameterVersion] = OrionTools.addonVersion()
 		if not time == None: parameters[self.ParameterTime] = time
 		return self._request(mode = self.ModeNotification, action = self.ActionRetrieve, parameters = parameters)
 

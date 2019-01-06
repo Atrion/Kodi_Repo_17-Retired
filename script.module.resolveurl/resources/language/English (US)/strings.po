@@ -207,3 +207,23 @@ msgstr "AllDebrid Resolver Authorized"
 msgctxt "#33047"
 msgid "Enable PopUps"
 msgstr "Enable PopUps"
+
+msgctxt "#33048"
+msgid "API Key"
+msgstr "API Key"
+
+msgctxt "#33049"
+msgid "Torrent Support"
+msgstr "Torrent Support"
+
+msgctxt "#33050"
+msgid "Cached torrents only"
+msgstr "Cached torrents only"
+
+msgctxt "#33051"
+msgid "Premiumize Authorization Reset"
+msgstr "Premiumize Authorization Reset"
+
+msgctxt "#33052"
+msgid "Premiumize Resolver Authorized"
+msgstr "Premiumize Resolver Authorized"

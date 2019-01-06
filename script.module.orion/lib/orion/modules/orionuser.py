@@ -249,7 +249,9 @@ class OrionUser:
 		OrionSettings.set('account.label.status', self.status().capitalize() if valid else OrionTools.translate(32033))
 		if valid:
 			OrionSettings.set('account.label.email', self.email())
-			OrionSettings.set('account.label.package', self.subscriptionPackageName() + ' (' + str(self.subscriptionPackageLimit(OrionTools.translate(32030))) + ')')
+			packageName = self.subscriptionPackageName()
+			packageLimit = self.subscriptionPackageLimit(OrionTools.translate(32030))
+			OrionSettings.set('account.label.package', packageName + ('' if packageName == packageLimit else ' (' + str(packageLimit) + ')'))
 			OrionSettings.set('account.label.time', OrionTools.timeDays(timeTo = self.subscriptionTimeExpiration(0), format = True))
 			OrionSettings.set('account.label.limit', str(OrionTools.round(100 * self.requestsDailyUsed(0, True), 0)) + '% (' + str(self.requestsDailyUsed(0)) + ' ' + OrionTools.translate(32032) + ' ' + str(self.requestsDailyLimit(OrionTools.translate(32030))) + ')')
 		else:
@@ -295,6 +297,7 @@ class OrionUser:
 	def update(self, disable = False):
 		try:
 			if disable:
+				self.mData = None
 				self._settingsUpdate(False)
 				return False
 			else:

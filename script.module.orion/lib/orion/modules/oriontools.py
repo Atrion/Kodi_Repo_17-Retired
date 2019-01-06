@@ -420,6 +420,11 @@ class OrionTools:
 			except: pass
 		return version
 
+	@classmethod
+	def kodiVersionNew(self):
+		try: return self.kodiVersion() >= 18
+		except: return False
+
 	##############################################################################
 	# EXECUTE
 	##############################################################################
@@ -622,7 +627,8 @@ class OrionTools:
 			elif connection == 3: base = OrionSettings.getString('general.advanced.connection.ip')
 		else:
 			base = OrionSettings.getString('internal.domain', raw = True)
-		return 'https://%s/api' % base
+		if base == 'localhost' or base == '127.0.0.1': return 'http://%s/orion/api' % base
+		else: return 'https://%s/api' % base
 
 	@classmethod
 	def linkIs(self, link, magnet = True):

@@ -10,23 +10,33 @@
 
 # Addon Name: Yoda
 # Addon id: plugin.video.Yoda
-# Addon Provider: MuadDib
+# Addon Provider: Supremacy
 
-import re,traceback,urllib,urlparse
+import re, urllib, urlparse
 
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import debrid
-from resources.lib.modules import log_utils
+from resources.lib.modules import source_utils
+from resources.lib.modules import cfscrape
+
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['en']
-        self.domains = ['scene-rls.com','scene-rls.net']
-        self.base_link = 'http://scene-rls.net/'
-        self.search_link = '/search/%s/feed/rss2/'
-        self.search_link_2 = '/?s=%s&submit=Find'
+        self.domains = ['scene-rls.com', 'scene-rls.net']
+        self.base_link = 'http://scene-rls.net'
+        self.search_link = '/?s=%s&submit=Find'
+        self.scraper = cfscrape.create_scraper()
+
+    def movie(self, imdb, title, localtitle, aliases, year):
+        try:
+            url = {'imdb': imdb, 'title': title, 'year': year}
+            url = urllib.urlencode(url)
+            return url
+        except:
+            return
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
@@ -34,8 +44,6 @@ class source:
             url = urllib.urlencode(url)
             return url
         except:
-            failure = traceback.format_exc()
-            log_utils.log('SceneRls - Exception: \n' + str(failure))
             return
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):
@@ -48,8 +56,6 @@ class source:
             url = urllib.urlencode(url)
             return url
         except:
-            failure = traceback.format_exc()
-            log_utils.log('SceneRls - Exception: \n' + str(failure))
             return
 
     def sources(self, url, hostDict, hostprDict):
@@ -67,46 +73,20 @@ class source:
 
             title = data['tvshowtitle'] if 'tvshowtitle' in data else data['title']
 
-            hdlr = 'S%02dE%02d' % (int(data['season']), int(data['episode'])) if 'tvshowtitle' in data else data['year']
+            hdlr = '%sS%02dE%02d' % (data['year'], int(data['season']), int(data['episode'])) if 'tvshowtitle' in data else data['year']
 
-            query = '%s S%02dE%02d' % (data['tvshowtitle'], int(data['season']), int(data['episode'])) if 'tvshowtitle' in data else '%s %s' % (data['title'], data['year'])
+            query = '%s %s S%02dE%02d' % (data['tvshowtitle'], data['year'], int(data['season']), int(data['episode'])) if 'tvshowtitle' in data else '%s %s' % (data['title'], data['year'])
             query = re.sub('(\\\|/| -|:|;|\*|\?|"|\'|<|>|\|)', ' ', query)
 
             try:
-                feed = True
-
                 url = self.search_link % urllib.quote_plus(query)
                 url = urlparse.urljoin(self.base_link, url)
 
-                r = client.request(url)
-                if r == None: feed = False
-
-                posts = client.parseDOM(r, 'item')
-                if not posts: feed = False
-
-                items = []
-
-                for post in posts:
-                    try:
-                        u = client.parseDOM(post, 'enclosure', ret='url')
-                        u = [(i.strip('/').split('/')[-1], i) for i in u]
-                        items += u
-                    except:
-                        pass
-            except:
-                pass
-
-            try:
-                if feed == True: raise Exception()
-
-                url = self.search_link_2 % urllib.quote_plus(query)
-                url = urlparse.urljoin(self.base_link, url)
-
-                r = client.request(url)
+                r = self.scraper.get(url).content
 
                 posts = client.parseDOM(r, 'div', attrs={'class': 'post'})
 
-                items = [] ; dupes = []
+                items = []; dupes = []
 
                 for post in posts:
                     try:
@@ -121,14 +101,14 @@ class source:
                         fmt = re.sub('(.+)(\.|\(|\[|\s)(\d{4}|S\d*E\d*|S\d*)(\.|\)|\]|\s)', '', t.upper())
                         fmt = re.split('\.|\(|\)|\[|\]|\s|\-', fmt)
                         fmt = [i.lower() for i in fmt]
-                        if not any(i in ['1080p', '720p'] for i in fmt): raise Exception()
+                        #if not any(i in ['1080p', '720p'] for i in fmt): raise Exception()
 
                         if len(dupes) > 2: raise Exception()
                         dupes += [x]
 
                         u = client.parseDOM(post, 'a', ret='href')[0]
 
-                        r = client.request(u)
+                        r = self.scraper.get(u).content
                         u = client.parseDOM(r, 'a', ret='href')
                         u = [(i.strip('/').split('/')[-1], i) for i in u]
                         items += u
@@ -150,10 +130,11 @@ class source:
 
                     if not y == hdlr: raise Exception()
 
-                    quality,info = source_utils.get_release_quality(name, item[1])
+                    quality, info = source_utils.get_release_quality(name, item[1])
 
                     url = item[1]
-                    if any(x in url for x in ['.rar', '.zip', '.iso']): raise Exception()
+                    if any(x in url for x in ['.rar', '.zip', '.iso']):
+                        raise Exception()
                     url = client.replaceHTMLCodes(url)
                     url = url.encode('utf-8')
 
@@ -168,9 +149,7 @@ class source:
 
             return sources
         except:
-            failure = traceback.format_exc()
-            log_utils.log('SceneRls - Exception: \n' + str(failure))
-            return sources
+            return
 
     def resolve(self, url):
         return url

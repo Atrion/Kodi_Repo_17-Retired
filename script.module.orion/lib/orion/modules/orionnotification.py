@@ -28,6 +28,7 @@ from orion.modules.orionapi import *
 from orion.modules.orioninterface import *
 from orion.modules.orionsettings import *
 from orion.modules.orionuser import *
+from orion.modules.orionpromotion import *
 
 class OrionNotification:
 
@@ -84,6 +85,14 @@ class OrionNotification:
 		except: return default
 
 	##############################################################################
+	# PROMOTION
+	##############################################################################
+
+	def promotion(self, default = None):
+		try: return OrionPromotion(self.mData['promotion'])
+		except: return default
+
+	##############################################################################
 	# UPDATE
 	##############################################################################
 
@@ -104,6 +113,7 @@ class OrionNotification:
 	##############################################################################
 
 	def dialog(self, wait = False):
+		promotion = self.promotion()
 		message = ''
 		message += OrionInterface.font(OrionTools.addonName() + ' ' + OrionTools.translate(32157), bold = True, color = OrionInterface.ColorPrimary, uppercase = True)
 		message += OrionInterface.fontNewline()
@@ -111,6 +121,13 @@ class OrionNotification:
 		message += OrionInterface.fontNewline() + OrionInterface.fontNewline()
 		message += OrionInterface.font(self.contentTitle(), bold = True, color = OrionInterface.ColorPrimary)
 		message += OrionInterface.fontNewline() + OrionInterface.fontNewline()
+		if promotion:
+			offer = ''
+			if promotion.limitMultiplier(): offer = str(promotion.limitMultiplier()) + 'x ' + OrionInterface.font(32198)
+			message += OrionInterface.font(OrionTools.translate(32197) + ': ', color = OrionInterface.ColorPrimary) + offer + OrionInterface.fontNewline()
+			message += OrionInterface.font(OrionTools.translate(32195) + ': ', color = OrionInterface.ColorPrimary) + OrionInterface.font(OrionTools.timeFormat(time = promotion.timeStart(), format = OrionTools.FormatDate) if promotion.timeStart() else 32199) + OrionInterface.fontNewline()
+			message += OrionInterface.font(OrionTools.translate(32196) + ': ', color = OrionInterface.ColorPrimary) + OrionInterface.font(OrionTools.timeFormat(time = promotion.timeEnd(), format = OrionTools.FormatDate) if promotion.timeEnd() else 32199)
+			message += OrionInterface.fontNewline() + OrionInterface.fontNewline()
 		message += self.contentMessage('')
 		OrionInterface.dialogPage(title = 32157, message = message, wait = wait)
 

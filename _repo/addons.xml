@@ -2,7 +2,7 @@
 <addons>
 <addon id="service.xbmc.versioncheck"
        name="Version Check"
-      version="0.4.3"
+      version="0.4.5"
       provider-name="Team Kodi">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -668,6 +668,69 @@ Fixed search issue caused by character accents
   <requires>
     <import addon="xbmc.core" version="0.1.0"/>
   </requires>
+</addon>
+
+<addon id="context.seren" version="0.6" name="Seren - Global Context Menu Items" provider-name="Nixgates">
+	<requires>
+		<import addon="xbmc.python" version="2.23.0" />
+		<import addon="plugin.video.seren" version="0.1.22" />
+	</requires>
+	<extension point="kodi.context.item">
+        <menu id="kodi.core.main">
+            <item library="shuffle.py">
+                <label>Shuffle Play</label>
+                <visible>String.StartsWith(ListItem.path,plugin://plugin.video.seren/)+String.IsEqual(ListItem.dbtype,tvshow)</visible>
+            </item>
+			<item library="findSimilar.py">
+                <label>Find Similar</label>
+                <visible>String.StartsWith(ListItem.path,plugin://plugin.video.seren/)+[String.IsEqual(ListItem.dbtype,tvshow)|String.IsEqual(ListItem.dbtype,movie)]</visible>
+            </item>
+			<item library="rescrape.py">
+                <label>Rescrape Item</label>
+                <visible>String.StartsWith(ListItem.path,plugin://plugin.video.seren/)+[String.IsEqual(ListItem.dbtype,episode)|String.IsEqual(ListItem.dbtype,movie)]</visible>
+            </item>
+			<item library="sourceSelect.py">
+                <label>Source Select</label>
+                <visible>String.StartsWith(ListItem.path,plugin://plugin.video.seren/)+[String.IsEqual(ListItem.dbtype,episode)|String.IsEqual(ListItem.dbtype,movie)]</visible>
+            </item>
+			<item library="browseShow.py">
+                <label>Browse Show</label>
+                <visible>String.StartsWith(ListItem.path,plugin://plugin.video.seren/)+[String.IsEqual(ListItem.dbtype,episode)|String.IsEqual(ListItem.dbtype,tvshow)]</visible>
+            </item>
+			<item library="traktManager.py">
+				<label>Trakt Manager</label>
+				<visible>String.StartsWith(ListItem.path,plugin://plugin.video.seren/)+[String.IsEqual(ListItem.dbtype,episode)|String.IsEqual(ListItem.dbtype,tvshow)|String.IsEqual(ListItem.dbtype,season)|String.IsEqual(ListItem.dbtype,movie)]</visible>
+			</item>
+        </menu>
+    </extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Seren - This Addon is currently in beta. Please be aware there may be bugs present</summary>
+		<description lang="en">Adds Global Contextual Menu Items for Seren menu items throughout Kodi
+		</description>
+		<platform>all</platform>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+		<forum></forum>
+		<website></website>
+		<source></source>
+		<disclaimer lang="en"></disclaimer>
+		<assets>
+			<icon>temp-icon.png</icon>
+			<fanart>temp-fanart.png</fanart>
+		</assets>
+		<news>
+Changelog Version 0.5:
+Fixed Source Select (Changed built-in function to PlayMedia)
+
+Changelog Version 0.4:
+Trakt Manager now available for season objects
+
+Changelog Version 0.3:
+Fixed Shuffle play on continue watching items
+Added Browse Show for TV show items
+Removed Torrent File Select - Moved to internal seren Menus only
+Added Trakt Manager
+		</news>
+	</extension>
 </addon>
 
 <addon id="script.module.idna"
@@ -1950,6 +2013,26 @@ Fixed search issue caused by character accents
 	</extension>
 </addon>
 
+    <addon id="repository.blamo" name="[COLOR red]Blamo Repo[/COLOR]" version="6.0.0" provider-name="Mr Blamo">
+        <requires>
+            <import addon="xbmc.addon" version="12.0.0"/>
+        </requires>
+        <extension point="xbmc.addon.repository" name="[COLOR red]Blamo Repo[/COLOR]">
+            <dir>
+			<info compressed="false">https://raw.githubusercontent.com/MrBlamo420/Project/master/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/MrBlamo420/Project/master/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/MrBlamo420/Project/master/zips/</datadir>
+            <hashes>false</hashes>
+			</dir>
+        </extension>
+        <extension point="xbmc.addon.metadata">
+            <summary>The Official Repo for Mr Blamo</summary>
+            <description>The Official Repo for Mr Blamo</description>
+            <platform>all</platform>
+            <genre>movies,usa</genre>
+        </extension>
+    </addon>
+
 <addon id="script.module.addon.signals"
 	name="Addon Signals"
 	version="0.0.3"
@@ -1964,7 +2047,7 @@ Fixed search issue caused by character accents
 	</extension>
 </addon>
 
-<addon id="plugin.video.Yoda" version="1.1.6" name="[COLORgreen]Yoda[/COLOR]" provider-name="Yoda">
+<addon id="plugin.video.Yoda" version="1.1.7" name="[COLORgreen]Yoda[/COLOR]" provider-name="Yoda">
 	<requires>
 		<import addon="xbmc.python" version="2.19.0" />
 		<import addon="script.module.Yoda" />
@@ -2077,7 +2160,7 @@ Fixed search issue caused by character accents
     </extension>
 </addon>
 
-<addon id="script.module.resolveurl" name="ResolveURL" version="5.0.19" provider-name="jsergio">
+<addon id="script.module.resolveurl" name="ResolveURL" version="5.0.26" provider-name="jsergio">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.youtube" optional="true" />
@@ -2342,7 +2425,7 @@ Fixed search issue caused by character accents
   </extension>
 </addon>
 
-    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.1.4" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.1.5" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
@@ -2357,6 +2440,20 @@ Fixed search issue caused by character accents
             <description>Atrion's Repo for Kodi 17.x</description>
             <platform>all</platform>
     </extension>
+</addon>
+
+<addon id="repository.nixgates" name="Nixgates Repo" version="1.0.0" provider-name="Nixgates">
+	<extension point="xbmc.addon.repository" name="Nixgates Repo">
+		<info compressed="false">https://raw.githubusercontent.com/nixgates/nixgates/master/packages/addons.xml</info>
+		<checksum>https://raw.githubusercontent.com/nixgates/nixgates/master/packages/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.githubusercontent.com/nixgates/nixgates/master/packages</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Nixgates</summary>
+		<description>Nixgates Repository</description>
+		<disclaimer></disclaimer>
+		<platform>all</platform>
+	</extension>
 </addon>
 
 <addon id="script.globalsearch" name="Global Search" version="7.4.7" provider-name="ronie">
@@ -3118,7 +3215,7 @@ change:  Better handling of read/write falures and errors to help troubleshootin
 	</extension>
 </addon>
 
-<addon id="plugin.video.youtube" name="YouTube" version="6.2.2" provider-name="bromix">
+<addon id="plugin.video.youtube" name="YouTube" version="6.2.3" provider-name="bromix">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
         <import addon="script.module.six" version="1.11.0"/>
@@ -3132,6 +3229,19 @@ change:  Better handling of read/write falures and errors to help troubleshootin
     <extension point="xbmc.python.module" library="resources/lib/"/>
     <extension point="xbmc.addon.metadata">
         <news>
+6.2.3
+[add] Next Page to 'More...' -> 'Add to...' context menu
+[add] icon and description to playlists in 'More...' -> 'Add to...' context menu on Kodi 17+
+[add] 'Play audio only' context menu item
+[fix] generated dash with no supported video streams(audio only) being played when Audio only not enabled
+[fix] potential RuntimeError when retrieving total time of playing content if player is stopped immediately
+[lang] nl_nl strings |contrib: Markman-B|
+[lang] pl_pl strings |contrib: xulek|
+[lang] pl_pl strings |contrib: drrak|
+[lang] sk_sk strings |contrib: jose1711|
+[lang] el_gr strings |contrib: twilight0|
+[lang] es_es strings |contrib: roliverosc|
+
 6.2.2
 [fix] signature function not found on some videos
 
@@ -3139,7 +3249,6 @@ change:  Better handling of read/write falures and errors to help troubleshootin
 [fix] some streams reporting as Unavailable
 [fix] utf-8 file paths
 [fix] settings, and switch user causing perpetual busy dialog on Kodi 18
-[lang] sk_sk strings |contrib: jose1711|
         </news>
         <assets>
             <icon>icon.png</icon>
@@ -3896,7 +4005,7 @@ v5.2.14 (2017-01-23)
   </extension>
 </addon>
 
-<addon id="script.module.orion" version="1.3.1" name="Orion" provider-name="Orion">
+<addon id="script.module.orion" version="1.3.2" name="Orion" provider-name="Orion">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="repository.orion" version="1.0.0" optional="true" />
@@ -4160,10 +4269,10 @@ v5.2.14 (2017-01-23)
   </extension>
 </addon>
 
-<addon id="script.tv.show.next.aired" name="TV Show - Next Aired" version="6.0.15" provider-name="Ppic,Frost,ronie,`Black,phil65,WayneD">
+<addon id="script.tv.show.next.aired" name="TV Show - Next Aired" version="7.0.1" provider-name="WayneD,marcelveldt">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
-		<import addon="script.module.simplejson" version="2.0.10"/>
+        <import addon="script.module.thetvdb" version="1.0.20" />
 	</requires>
 	<extension point="xbmc.python.script" library="default.py">
 		<provides>executable</provides>
@@ -4230,8 +4339,8 @@ v5.2.14 (2017-01-23)
 		<platform>all</platform>
 		<license>GPL v2.0</license>
 		<forum>http://forum.xbmc.org/showthread.php?tid=186090</forum>
-		<website>http://github.com/WayneD/script.tv.show.next.aired</website>
-		<source>https://github.com/WayneD/script.tv.show.next.aired.git</source>
+		<website>http://github.com/marcelveldt/script.tv.show.next.aired</website>
+		<source>https://github.com/marcelveldt/script.tv.show.next.aired.git</source>
 	</extension>
 </addon>
 
@@ -4323,6 +4432,176 @@ v5.2.14 (2017-01-23)
   </extension>
 </addon>
 
+<addon id="plugin.video.seren" version="0.1.24" name="Seren" provider-name="Nixgates">
+	<requires>
+		<import addon="xbmc.python" version="2.19.0" />
+		<import addon="script.module.requests" version="2.19.1" />
+		<import addon="script.module.beautifulsoup4" version="4.5.3"/>
+		<import addon="script.module.metahandler" version="1.0.0" />
+		<import addon="plugin.video.youtube" version="6.2.0"/>
+		<import addon="script.module.addon.signals" version="0.0.1"/>
+	</requires>
+	<extension point="xbmc.python.pluginsource" library="seren.py">
+		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.service" library="service.py" />
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Seren - This Addon is currently in beta. Please be aware there may be bugs present</summary>
+		<description lang="en">
+		</description>
+		<platform>all</platform>
+		<license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
+		<forum></forum>
+		<website></website>
+		<source></source>
+		<disclaimer lang="en">The author of this addon takes no responsibility for any 3rd party intergration or modification of this software, please ensure your use of this software abides by your local and insterstate laws.</disclaimer>
+		<assets>
+			<icon>temp-icon.png</icon>
+			<fanart>temp-fanart.png</fanart>
+		</assets>
+		<news>
+
+Version 0.1.24 Changelog:
+Fixed Movie Watchlist Sort to content type "Show"
+
+Version 0.1.23 Changelog:
+Added Watchlist sorting
+Added extra fallbacks for trakt outages
+Changed tools setSetting to a function so Kodi modules are not initialised if there is an exception
+
+Version 0.1.22 Changelog:
+Re-installation and updating of provider packages now honors previous settings
+Fixed Hidden items error if no connection to Trakt could be made.
+
+Version 0.1.21 Changelog:
+Added onAVStarted for Kodi 18+ due to issues with offset
+Re-factored code and cleaned up imports
+
+Version 0.1.20 Changelog:
+Provider installer re-write
+Provider packages can now update automatically or manually
+Fixed Trakt Movie Scrobbling
+Fixed Finish Watching Movies
+Added Remove (movie/episode) Progress to Trakt Manager
+
+Version 0.1.19 Changelog:
+Fixed Hidden Items (Possibly - please check)
+Trakt Lists now paginated and sorted
+Silent Scraper setting now reset on startup incase of Kodi crash
+New Shows and recently updated shows now filtered by Kodi Languge
+Corrected some typos
+Extended relevant show pack identification
+Un-aired episodes now removed from automatic playlist generator
+Premiumize autocache now runs premiumize cleanup instead of deleting transfer
+Added option to allow premiumize users to utilize transcoded files
+Added Banner image to episode objects
+Seasons now sorted by season number and not title
+Added basic duplicate provider filtering (provider name only)
+Show premiered dates now retrieved from Trakt and not TVDB
+
+Version 0.1.18 Changelog:
+Added fallback from TMDB SSL certificate issues
+
+Version 0.1.17 Changelog:
+Removed Trakt Lists pagination (Fixed List Sorting)
+Complete work over of TV show continue watching display
+Added Sort Options for Next Up
+Renamed and moved Continue Watching Menu items to "Finish Watching" and added to their respective folders
+
+Version 0.1.16 Changelog:
+Fixed season items not being marked as watched
+Added try/except clauses to catch errors with get_hidden_items
+Adjust Info detection to better detect source information
+Added fallback if info list was empty for Source Select
+Added ability to show sources in source select as a single line in case of skins that do not support the multiline view
+Simplified provider failure output
+Added removal of unknown video keys for Kodi 18
+Removed trakt list lengths
+Premiumize module now removes items from account if it failed to resolve a link
+Premiumize cleanup now occurs at end of resolving
+Threads no longer marked as daemon as it doesn't work within Kodi
+Forced provider threads to return if getSources canceled
+Added fallback for gathering of hoster domains
+
+Version 0.1.15 Changelog:
+Fallback for DateTime ValueError
+Changed process of list generating so window shouldn't contain random number of items
+
+Version 0.1.14 Changelog:
+Increased Trakt Caching
+
+Version 0.1.13 Changelog:
+Source Select items now clickable
+Esc Key now closes Source Select dialog
+
+Version 0.1.12 Changelog:
+Added premiumize transfer database cleanup to maintenance script
+Changed scrobble ID back to Trakt as IMDB ID was unreliable causing trakt progress for some random show called pride
+if the IMDB ID wasn't available for an episode (sorry for my testers watching origin)
+Fixed issue with keepalive not dying causing scrobble issues and issues with Upnext
+Added 265 priority sort
+Some spelling mistakes
+Changed Upnext episode IDs to Trakt ID
+Added setUniqueIDs to tools.addDirectoryItem function
+Hide Item in trakt manager now actually sends the trakt request (Bad nix)
+
+Version 0.1.11 Changelog:
+Added workaround for Kodi 18 Widgets
+Increased support for Kodi 18 player
+Fixed issue with Kodi 18 where pre-emptive scraping wouldn't occur
+Adjusted menu content types so they now respect their content correctly
+
+Version 0.1.10 Changelog:
+Adjusted Migration Script so it no longer broke Super Faviorates
+Adjusted TMDB movie artwork to fix issue where it would display the wrong media (removed thumbnail)
+
+Version 0.1.09 Changelog:
+Increased torrent file identification
+Extended timeout for failed cache assit attempts to 3 hours
+Changed Trkat Scrobble Object to current playing item IMDB Number
+Fixed Trakt Scrobbling with Up Next Addon Intergration
+Fixed Trakt Scrobbling when seeking
+Added increased fallbacks for TV show metadata
+
+Version 0.1.08 Changelog:
+Restructed Settings page to use subsetting attribute
+Added Support for Context Menu Addon
+
+Version 0.1.07 Changelog:
+Added automatic migration from incorrect addon ID release
+Added Notification if no sources are found during pre-scrape
+Removed manual cache dialog prompt during pre-emptive scraping
+Cache inserts now threaded
+Added Semaphore to relieve thread pressure on database
+Fixed KeyError exception in TVDB episode function
+Custom Windows are now removed from scope with del
+Removed Please Check Internet Connection Dialog
+Added Logging for RD refresh Errors
+
+Version 0.1.06 Changelog:
+Added 3D filter Setting
+Added File Size Limit
+Added View types for Seasons, Episodes and Default for Menus
+Added Debrid Priorities
+Added Install UpNext Addon Setting
+Fixed capitalised Addon ID
+Fixed issue where TVDB token was not initially created
+Added ability to hide items from trakt manager
+Adjusted Source Select to multiline string
+Increased listitem size in custom source select window
+
+Version 0.1.05 Changelog:
+Added better Hoster support
+Changed hoster domains to (domain, name) tuple
+Fixed issue where color change would set color even if cancelled
+Cleaned up logging
+Fixed Manual Caching
+Adjusted Manual Caching display string
+Fixed View Types not being set
+		</news>
+	</extension>
+</addon>
+
 <addon id="xbmc.metadata" version="2.1.0" provider-name="Team Kodi">
   <backwards-compatibility abi="1.0"/>
   <requires>
@@ -4343,7 +4622,7 @@ v5.2.14 (2017-01-23)
   </requires>
 </addon>
 
-<addon id="script.module.Yoda" name="[COLORgreen]Yoda Module[/COLOR]" version="1.00.045" provider-name="S-media">
+<addon id="script.module.Yoda" name="[COLORgreen]Yoda Module[/COLOR]" version="1.00.046" provider-name="S-media">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="script.module.requests" />
@@ -4624,7 +4903,7 @@ v5.2.14 (2017-01-23)
 	</extension>
 </addon>
 
-    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.1.4" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.1.5" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>

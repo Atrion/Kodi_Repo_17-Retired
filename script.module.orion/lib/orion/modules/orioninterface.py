@@ -177,15 +177,15 @@ class OrionInterface:
 
 	@classmethod
 	def loaderShow(self):
-		xbmc.executebuiltin('ActivateWindow(busydialog)')
+		xbmc.executebuiltin('ActivateWindow(%s)' % ('busydialognocancel' if OrionTools.kodiVersionNew() else 'busydialog'))
 
 	@classmethod
 	def loaderHide(self):
-		xbmc.executebuiltin('Dialog.Close(busydialog)')
+		xbmc.executebuiltin('Dialog.Close(%s)' % ('busydialognocancel' if OrionTools.kodiVersionNew() else 'busydialog'))
 
 	@classmethod
 	def loaderVisible(self):
-		return xbmc.getCondVisibility('Window.IsActive(busydialog)') == 1
+		return xbmc.getCondVisibility('Window.IsActive(%s)' % ('busydialognocancel' if OrionTools.kodiVersionNew() else 'busydialog')) == 1
 
 	##############################################################################
 	# DIALOG

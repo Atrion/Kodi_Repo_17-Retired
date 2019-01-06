@@ -215,7 +215,7 @@ class OrionSettings:
 	def set(self, id, value, commit = True, cached = False):
 		if value is True or value is False:
 			value = OrionTools.toBoolean(value, string = True)
-		elif OrionTools.isStructure(value):
+		elif OrionTools.isStructure(value) or value is None:
 			database = self._database()
 			database.insert('INSERT OR IGNORE INTO %s (id) VALUES(?);' % self.DatabaseSettings, parameters = (id,), commit = commit)
 			database.update('UPDATE %s SET data = ? WHERE id = ?;' % self.DatabaseSettings, parameters = (OrionTools.jsonTo(value), id), commit = commit)

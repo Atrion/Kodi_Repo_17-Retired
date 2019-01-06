@@ -204,3 +204,23 @@ msgstr ""
 msgctxt "#33047"
 msgid "Enable PopUps"
 msgstr ""
+
+msgctxt "#33048"
+msgid "API Key"
+msgstr ""
+
+msgctxt "#33049"
+msgid "Torrent Support"
+msgstr ""
+
+msgctxt "#33050"
+msgid "Cached torrents only"
+msgstr ""
+
+msgctxt "#33051"
+msgid "Premiumize Authorization Reset"
+msgstr ""
+
+msgctxt "#33052"
+msgid "Premiumize Resolver Authorized"
+msgstr ""

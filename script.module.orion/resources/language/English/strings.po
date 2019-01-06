@@ -789,6 +789,26 @@ msgctxt "#32194"
 msgid "Settings Cache"
 msgstr ""
 
+msgctxt "#32195"
+msgid "Promotion Start"
+msgstr ""
+
+msgctxt "#32196"
+msgid "Promotion End"
+msgstr ""
+
+msgctxt "#32197"
+msgid "Promotion Offer"
+msgstr ""
+
+msgctxt "#32198"
+msgid "Limit Multiplier"
+msgstr ""
+
+msgctxt "#32199"
+msgid "Infinite"
+msgstr ""
+
 ##############################################################################
 # MESSAGES
 ##############################################################################

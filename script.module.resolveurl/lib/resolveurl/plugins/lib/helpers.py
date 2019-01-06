@@ -92,9 +92,9 @@ def sort_sources_list(sources):
         except:
             common.logger.log_debug('Scrape sources sort failed |int(re.sub("\D", "", x[0])|')
             try:
-                sources.sort(key=lambda x: re.sub("[^a-zA-Z]", "", x[0]))
+                sources.sort(key=lambda x: re.sub("[^a-zA-Z]", "", x[0].lower()))
             except:
-                common.logger.log_debug('Scrape sources sort failed |re.sub("[^a-zA-Z]", "", x[0])|')
+                common.logger.log_debug('Scrape sources sort failed |re.sub("[^a-zA-Z]", "", x[0].lower())|')
     return sources
 
 def parse_sources_list(html):
