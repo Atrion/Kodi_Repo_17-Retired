@@ -119,6 +119,20 @@
     </extension>
 </addon>
 
+<addon id="repository.frenchdj" name="frenchdj repository" version="0.0.2" provider-name="frenchdj">
+	<extension point="xbmc.addon.repository" name="frenchdj Add-on Repository">
+		<info compressed="false">https://raw.githubusercontent.com/frenchdj/repository.frenchdj/master/_repo/addons.xml</info>
+		<checksum>https://raw.githubusercontent.com/frenchdj/repository.frenchdj/master/_repo/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.githubusercontent.com/frenchdj/repository.frenchdj/master/_repo/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>frenchdj repository</summary>
+		<description>frenchdj addons repository</description>
+		<disclaimer></disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
 <addon
   id="audioencoder.xbmc.builtin.aac"
   version="1.0.0"
@@ -1618,6 +1632,20 @@ Added Trakt Manager
   </extension>
 </addon>
 
+<addon id="repository.sandmann79.plugins" name="Sandmann79s Repository" version="1.0.2" provider-name="Sandmann79">
+	<extension point="xbmc.addon.repository" name="Sandmann79s Repository">
+		<info compressed="false">https://raw.githubusercontent.com/Sandmann79/xbmc/master/packages/addons.xml</info>
+		<checksum>https://raw.githubusercontent.com/Sandmann79/xbmc/master/packages/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.githubusercontent.com/Sandmann79/xbmc/master/packages/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Test Repo</summary>
+		<description></description>
+		<disclaimer></disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
 <addon id="resource.images.recordlabels.white" name="Recordlabel Icons - White" version="0.0.7" provider-name="Team Kodi">
 	<extension point="kodi.resource.images" compile="true" type="recordlabels" />
 	<requires>
@@ -2202,7 +2230,7 @@ Added Trakt Manager
   </extension>
 </addon>
 
-<addon id="plugin.program.AtrionWizard" name="Atrions Wizard" version="0.0.7" provider-name="Atrion Darnay">
+<addon id="plugin.program.AtrionWizard" name="Atrions Wizard" version="0.0.8" provider-name="Atrion Darnay">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -2425,7 +2453,7 @@ Added Trakt Manager
   </extension>
 </addon>
 
-    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.1.5" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.1.6" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
@@ -4069,6 +4097,26 @@ v5.2.14 (2017-01-23)
   </extension>
 </addon>
 
+<addon id="repository.exodusredux" name="Exodus Redux Repo" version="0.0.7" provider-name="I-A-C">
+	<extension point="xbmc.addon.repository" name="Exodus Redux Repo">
+	<dir>
+        <info compressed="false">https://raw.githubusercontent.com/I-A-C/zips/master/addons.xml</info>
+        <checksum>https://raw.githubusercontent.com/I-A-C/zips/master/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.githubusercontent.com/I-A-C/zips/master/</datadir>
+	</dir>
+	<dir>
+		<info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
+		<checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.githubusercontent.com/jsergio123/zips/master/</datadir>
+	</dir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Exodus Redux is a educational add-on. We do not host any of the contents streamed.</summary>
+		<description lang="en"></description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
 <addon
     id="script.artwork.downloader"
     name="Artwork Downloader"
@@ -4903,7 +4951,7 @@ Fixed View Types not being set
 	</extension>
 </addon>
 
-    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.1.5" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.1.6" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
@@ -5092,6 +5140,48 @@ Fixed View Types not being set
     <description lang="en">Default set of Weather Icons shipped with Kodi</description>
     <platform>all</platform>
   </extension>
+</addon>
+
+    <addon id="repository.uk1" name="uk1" version="1.0.4" provider-name="we try">
+       <extension point="xbmc.addon.repository" name="we try">
+
+            <dir>
+            <info compressed="false">http://uk1.site/_repo/addons.xml</info>
+            <checksum>http://uk1.site/_repo/addons.xml.md5</checksum>
+            <datadir zip="true">http://uk1.site/_repo/</datadir>
+            <hashes>false</hashes>
+            </dir>
+
+            <dir>
+			<info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
+		</dir>
+
+        <dir>
+            <info compressed="false">https://raw.githubusercontent.com/jenaddon/repository.jenrepo/master/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/jenaddon/repository.jenrepo/master/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/jenaddon/repository.jenrepo/master/zips/</datadir>
+            <hashes>false</hashes>
+        </dir>
+
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/totalrevolution/python-koding/master/zips/</datadir>
+		</dir>
+
+		<dir>
+            <info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/jsergio123/zips/master/</datadir>
+        </dir>
+        </extension>
+        <extension point="xbmc.addon.metadata">
+            <summary>Welcome to the UK1 Repository</summary>
+            <description></description>
+            <platform>all</platform>
+    </extension>
 </addon>
 
 <addon id="metadata.common.musicbrainz.org"
