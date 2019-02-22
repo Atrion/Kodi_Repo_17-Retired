@@ -2230,7 +2230,7 @@ Added Trakt Manager
   </extension>
 </addon>
 
-<addon id="plugin.program.AtrionWizard" name="Atrions Wizard" version="0.0.8" provider-name="Atrion Darnay">
+<addon id="plugin.program.AtrionWizard" name="Atrions Wizard" version="0.0.9" provider-name="Atrion Darnay">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
   </requires>
@@ -2453,7 +2453,7 @@ Added Trakt Manager
   </extension>
 </addon>
 
-    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.1.6" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17B" name="[COLOR maroon]Atrion's Repo for Kodi 17.x Backup[/COLOR]" version="0.1.7" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
@@ -4951,7 +4951,7 @@ Fixed View Types not being set
 	</extension>
 </addon>
 
-    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.1.6" provider-name="Atrion Darnay">
+    <addon id="repository.Atrion17" name="[COLOR maroon]Atrion's Repo for Kodi 17.x[/COLOR]" version="0.1.7" provider-name="Atrion Darnay">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
